@@ -1,0 +1,46 @@
+/* Remove default margins and padding */
+body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, form, input, button, textarea, select, table, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* Set body to have full height and width */
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* Make sure all links are blue and underlined */
+a {
+    color: #0000ff;
+    text-decoration: underline;
+}
+
+/* Make sure all buttons are styled correctly */
+button, input[type="button"], input[type="reset"], input[type="submit"] {
+    background: #333;
+    border: 0;
+    color: #fff;
+    cursor: pointer;
+    font-size: 100%;
+    padding: 10px 20px;
+}
+
+/* Make sure all textareas are resizable by default */
+textarea {
+    resize: vertical;
+}
+
+/* Make sure all inputs have a box-sizing of border-box */
+input[type="text"], input[type="password"], input[type="email"], input[type="tel"], input[type="number"] {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -o-box-sizing: border-box;
+}

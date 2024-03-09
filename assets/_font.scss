@@ -1,0 +1,55 @@
+@mixin mobile {
+    @media(max-width:768px){
+        @content;
+    }
+}
+
+@mixin lineHeight {
+    line-height: 120%;
+
+    @include mobile {
+        line-height: 140%;
+    }
+}
+
+@mixin fontWeight-blod {
+    font-weight: 600;
+}
+
+@mixin fontWeight-regular {
+    font-weight: 400;
+}
+
+@mixin h6 {
+    font-size: 20px;
+    @include lineHeight;
+    @include fontWeight-blod;
+
+    @include mobile {
+        font-size: 16px;
+    }
+}
+
+@mixin T-LG {
+    font-size: 20px;
+    @include lineHeight;
+    @include mobile {
+        font-size: 16px;
+    }
+}
+
+@mixin T-RG {
+    font-size: 16px;
+    @include lineHeight;
+    @include mobile {
+        font-size: 14px;
+    }
+}
+
+@mixin T-XS {
+    font-size: 12px;
+    @include lineHeight;
+    @include mobile {
+        font-size: 11px;
+    }
+}

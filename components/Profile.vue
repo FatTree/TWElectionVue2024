@@ -44,6 +44,11 @@ watch( OAAreaVM, async() => {
     }
 });
 
+watch(formatted_vote_to_elect, () => {
+    const pie = document.querySelector('.pie');
+    pie!.style.setProperty('--deg', `${formatted_vote_to_elect.value / 100 * 360}deg`);
+});
+
 await getProfileList(props.id, props.type, props.code);
 
 </script>
@@ -51,11 +56,11 @@ await getProfileList(props.id, props.type, props.code);
     <div class="profile">
         <!-- <h1 class="profile__title">投票概況 </h1> -->
         <div class="profile__top">
-            <div class="pie">
+            <div class="pie" style="--deg: 270deg">
                 <div class="pie__center"></div>
             </div>
             <div class="profile__top__rate">
-                <p class="number">{{ formatted_vote_to_elect }} </p>
+                <p class="number">{{ formatted_vote_to_elect }} %</p>
                 <p class="word">投票率</p>
             </div>
         </div>
@@ -71,6 +76,10 @@ await getProfileList(props.id, props.type, props.code);
 <style lang="scss" scoped>
 @import '../assets/_color';
 @import '../assets/_font';
+/* :root {
+    --theAngle: 45deg;
+} */
+
 @keyframes spin {
 	to { transform: rotate(.5turn); }
 }
@@ -78,9 +87,6 @@ await getProfileList(props.id, props.type, props.code);
 @keyframes bg {
 	50% { background: #655; }
 }
-
-
-
 .profile {
     &__title {
         font-size: 20px;
@@ -94,10 +100,11 @@ await getProfileList(props.id, props.type, props.code);
         margin-bottom: 20px;
 
         > .pie {
+            --deg: 45deg;
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background: conic-gradient($indigo-normal 0, $indigo-normal 45deg, $white-dark 45deg);
+            background: conic-gradient($indigo-normal 0, $indigo-normal var(--deg), $white-dark var(--deg));
             display: flex;
             align-items: center;
             justify-content: center;

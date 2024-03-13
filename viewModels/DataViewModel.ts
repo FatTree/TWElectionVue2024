@@ -29,7 +29,7 @@ export type ProfileViewModel = ProfileModel & {
     formatted_valid_ticket: string;
     formatted_invalid_ticket: string;
     formatted_vote_ticket: string;
-    formatted_vote_to_elect: string;
+    formatted_vote_to_elect: number;
 }
 
 /**
@@ -39,7 +39,8 @@ export type ProfileViewModel = ProfileModel & {
 export type TicketViewModel = TicketModel & {
     vice: string;
     formatted_ticket_num: string;
-    formatted_ticket_percent: string;
+    formatted_ticket_percent: number;
+    party_color: string;
 }
 
 /** 
@@ -59,4 +60,9 @@ export type AreaSelectedViewModel = {
     li_code: string;
     areaCode: string;
     areaName: string;
+}
+
+export type PartyViewModel = {
+    party_name: string,
+    party_color: string,
 }

@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia';
 import { sortTicketFun } from '~/formatters/DataFormatter';
 import { useTicketStore } from '~/stores/useTicketStore';
 import type { AreaSelectedViewModel, AreaViewModel, TicketViewModel } from '~/viewModels/DataViewModel';
+import { PARTY, AREA } from '../assets/enum/enum';
 
 type Props = {
     id: string;
@@ -15,7 +16,7 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), {
     id: '1f7d9f4f6bfe06fdaf4db7df2ed4d60c',
-    type: 'N',
+    type: AREA.NATION,
     code: '00_000_00_000_0000',
     list: ()=>([]),
 });
@@ -29,12 +30,44 @@ if (props.liVM) {
 }
 
 const sortedTicketList = computed( () => props.list.sort(sortTicketFun));
+const generatePie = (list: TicketViewModel[]) => {
+    let prv_rate = 0;
+    let conicValue = '';
+    for(let i=0; i<list.length; i++) {
+        let nowEl = list[i];
+        let nowRate = Math.round(nowEl.formatted_ticket_percent / 100 * 360);
+        if (prv_rate === 0) {
+            prv_rate = nowRate;
+            conicValue = `${nowEl.party_color} 0deg, ${nowEl.party_color} ${prv_rate}deg`;
+        } else {
+            conicValue += `, ${nowEl.party_color} ${prv_rate}deg, ${nowEl.party_color} ${prv_rate + nowRate}deg`
+            prv_rate += nowRate;
+        }
+    }
+    
+    return conicValue;
+}
+
+onUpdated(() => {
+    const pie = document.querySelector('#pie');
+    pie!.style.setProperty('--conicValue', generatePie(sortedTicketList.value));
+});
+
+onMounted(()=> {
+    const pie = document.querySelector('#pie');
+    pie!.style.setProperty('--conicValue', generatePie(sortedTicketList.value));
+});
 
 </script>
 <template>
     <div class="ticketBox">
         <h3 v-if="liVM">{{ liVM?.areaCode }} - {{ liVM?.areaName }}</h3>
         <h3 v-else-if="areaVM">{{ areaVM.areaCode }} - {{ areaVM.areaName }}</h3>
+        <div v-if="type===AREA.NATION">
+            <div id="pie" style="--conicValue: 270deg">
+                <div class="pie__center"></div>
+            </div>
+        </div>
         <div class="ticket" v-for="(item, i) in sortedTicketList" :key="i">
             <div class="ticket__number">
                 <p>{{ item.cand_no }}</p>
@@ -56,7 +89,23 @@ const sortedTicketList = computed( () => props.list.sort(sortTicketFun));
 @import '../assets/_font';
 
 .ticketBox {
+    #pie {
+        --conicValue: #{$indigo-normal} 0, #{$indigo-normal} 20deg, #{$white-dark} 20deg, #{$white-dark} 80deg, red 80deg, red 160deg, yellow 160deg;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: conic-gradient(var(--conicValue));
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
+        > .pie__center {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: $white-normal;
+        }
+    }
     .ticket {
         display: flex;
         /* > div:not(:last-child) {

@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia';
 import { useElectionStore } from '~/stores/useElectionStore'
 
+
 // const store = useThemeStore();
 const store = useElectionStore();
 const { electionList } = storeToRefs(store);

@@ -40,6 +40,7 @@ export const basicInfoFormatter = (model: any): BasicViewModel => {
 }
 export const areaFormatter = (model: AreaModel): AreaViewModel => {
     const areaCode = `${model.prv_code}_${model.city_code}_${model.area_code}_${model.dept_code}_${model.li_code}`;
+    
     return {...model, areaCode};
 }
 export const profileFormatter = (model: ProfileModel): ProfileViewModel => {
@@ -47,7 +48,7 @@ export const profileFormatter = (model: ProfileModel): ProfileViewModel => {
     const formatted_invalid_ticket = (model.invalid_ticket).toLocaleString('en');
     const formatted_vote_ticket = (model.vote_ticket).toLocaleString('en');
     const formatted_vote_to_elect = model.vote_to_elect;
-    // const formatted_vote_to_elect = (model.vote_to_elect/100).toLocaleString('en-US', { style: 'percent', minimumFractionDigits: 2 });
+    
     return { ...model, formatted_invalid_ticket, formatted_valid_ticket, formatted_vote_ticket, formatted_vote_to_elect }
 }
 
@@ -67,7 +68,6 @@ export const ticketFormatter = (model: TicketModel[]): TicketViewModel[] => {
         const can: TicketModel = cand[i];
         const formatted_ticket_num = (can.ticket_num).toLocaleString('en');
         const formatted_ticket_percent = can.ticket_percent;
-        // const formatted_ticket_percent = (can.ticket_percent/100).toLocaleString('en-US', { style: 'percent', minimumFractionDigits: 2 });    
         const vic: TicketModel = vice.find((e) => (e.cand_no === cand[i].cand_no));
         const party_color = mappingPartyColor(can.party_name);
         const group: TicketViewModel = {...can, vice: vic.cand_name, formatted_ticket_num, formatted_ticket_percent, party_color};
@@ -75,6 +75,7 @@ export const ticketFormatter = (model: TicketModel[]): TicketViewModel[] => {
     }
     
     return formattedModel;
+    // return Object.assign({}, formattedModel);
 }
 
 export const sortTicketFun = (a: TicketViewModel, b: TicketViewModel) => {

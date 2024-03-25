@@ -45,8 +45,8 @@ watch( OAAreaVM, async() => {
 });
 
 watch(formatted_vote_to_elect, () => {
-    const pie = document.querySelector('.pie');
-    pie!.style.setProperty('--deg', `${formatted_vote_to_elect.value / 100 * 360}deg`);
+    const pie: HTMLElement = document.querySelector('.pie')!;
+    pie.style.setProperty('--deg', `${formatted_vote_to_elect.value / 100 * 360}deg`);
 });
 
 await getProfileList(props.id, props.type, props.code);
@@ -101,6 +101,8 @@ await getProfileList(props.id, props.type, props.code);
 
         > .pie {
             --deg: 45deg;
+            min-width: 120px;
+            min-height: 120px;
             width: 120px;
             height: 120px;
             border-radius: 50%;

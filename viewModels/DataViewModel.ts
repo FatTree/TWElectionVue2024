@@ -66,3 +66,10 @@ export type PartyViewModel = {
     party_name: string,
     party_color: string,
 }
+
+export type MapViewModel = {
+    name: string[],
+    party_name: string,
+    path: string,
+    fill: string,
+}

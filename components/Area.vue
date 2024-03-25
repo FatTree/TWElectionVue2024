@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
 import { defineEmits } from 'vue';
+import { sortTicketFun } from '~/formatters/DataFormatter';
 import type { AreaSelectedViewModel, AreaViewModel } from '~/viewModels/DataViewModel';
 
 type Props = {
     id: string;
     type: string;
-    code: string;
     optList: AreaViewModel[];
+    code?: string;
     liCode?: string;
 }
 
@@ -22,12 +23,29 @@ const props = withDefaults(defineProps<Props>(), {
 const areaStore = useAreaStore();
 const { 
     selectedLi,
+    selectedCity,
 } = storeToRefs(areaStore);
 
 const ticketStore = useTicketStore();
 const {
     getTicketList,
 } = ticketStore;
+
+const { 
+    ticketNationViewList,
+    ticketCityViewList,
+    ticketDistViewList,
+    ticketLiViewList,
+} = storeToRefs(ticketStore);
+
+const overallStore = useOverallStore();
+const {
+    OAType,
+    OACode,
+    OALiCode,
+    OAList,
+    OAAreaVM,
+} = storeToRefs(overallStore);
 
 const selectedArea: Ref<AreaSelectedViewModel | undefined> = ref();
 
@@ -44,13 +62,29 @@ watch( selectedArea,  async(v) => {
     if (props.type === 'L') {
         await getTicketList(props.id, props.type, props.code, selectedArea.value, props.liCode, selectedLi.value!);
     }
+    
+    switch (props.type) {
+        case 'C':
+            OAList.value = ticketCityViewList.value.sort(sortTicketFun);
+            break;
+        case 'D':
+            OAList.value = ticketDistViewList.value.sort(sortTicketFun);
+            break;
+        case 'L':
+            OAList.value = ticketLiViewList.value.sort(sortTicketFun);
+            break;
+        default:
+            OAList.value = ticketNationViewList.value.sort(sortTicketFun);
+            break;
+    }
+    console.log('Area(after): OAList', OAList.value);
 });
 
 </script>
 <template>
-    <div class="area">
+    <div>
         <select v-model="selectedArea">
-            <option v-if="type!=='C'" disabled selected>請選擇</option>
+            <option selected :value="undefined" disabled>請選擇</option>
             <option v-for="(item, i) in optList" :key="i"
                 :value="{
                     prv_code: item.prv_code,
@@ -60,14 +94,10 @@ watch( selectedArea,  async(v) => {
                     li_code: item.li_code,
                     areaCode: item.areaCode,
                     areaName: item.area_name
-                }">
-            {{ item.areaCode }}-{{ item.area_name }}</option>
+                }">{{ item.area_name }}</option>
+            <!-- {{ item.areaCode }}-{{ item.area_name }} -->
         </select>
     </div>
-</template>
-
-<style lang="scss" scoped>
-.area {
     
-}
-</style>
+    <!-- <button @click="selectedArea=undefined;">X</button> -->
+</template>

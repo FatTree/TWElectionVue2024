@@ -10,7 +10,8 @@ export const useOverallStore = defineStore( storeName, () => {
     const OALiCode = ref('');
     const OAList= ref<TicketViewModel[]>([]);
     const OAAreaVM = ref<AreaSelectedViewModel>();
-    const OAParty = ref();
+    const OACCode = ref('');
+    const OADCode = ref('');
     
     return {
         OAType,
@@ -18,5 +19,7 @@ export const useOverallStore = defineStore( storeName, () => {
         OALiCode,
         OAList,
         OAAreaVM,
+        OACCode,
+        OADCode,
     }
 });

@@ -59,7 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
     </div>
     <div v-else>
         <Tickets :id="id" type="C" :code="code" :list="ticketCityViewList" :areaVM="selectedCity" v-if="selectedCity" />
-        <Tickets :id="id" type="D" :code="selectedCity?.areaCode" :list="ticketDistViewList" :areaVM="selectedDist!" v-if="ticketDistViewList.length" />
+        <Tickets :id="id" type="D" :code="selectedCity?.areaCode" :list="ticketDistViewList" :areaVM="selectedDist!" v-if="ticketDistViewList.length && selectedDist" />
         <Tickets :id="id" type="L" :code="selectedCity?.areaCode" :list="ticketLiViewList" :areaVM="selectedDist!" :liVM="selectedLi!" v-if="selectedLi" />
     </div>
     

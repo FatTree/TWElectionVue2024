@@ -71,6 +71,25 @@ const PROFILE_URL = 'https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0
     },
 ]
  */
+
+const condition = (tp: string, rs: TicketModel, model?: AreaSelectedViewModel, liCode?: string, liModel?: AreaSelectedViewModel): boolean => {
+    let baseCondition = ( rs.prv_code === model?.prv_code && rs.city_code === model?.city_code);
+    if (tp === 'C') return baseCondition;
+    
+    if (tp !== 'C') {
+        baseCondition = (
+            baseCondition &&
+            rs.area_code === model?.area_code && 
+            rs.dept_code === model?.dept_code
+    )}
+
+    if (tp === 'L') {
+        baseCondition = (
+            baseCondition &&
+            rs.li_code === liModel?.li_code
+    )}
+    return baseCondition;
+}
 export const getElectionData = async(): Promise<ElectionModel[]> => {
     try {
         const res: ElectionGroupModel = await $fetch(ELECTION_LIST_URL);
@@ -99,6 +118,7 @@ export const getProfileData = async(id: string, type: string, code: string, VMod
     try {
         const res: ProfileGroupModel = await $fetch(`${PROFILE_URL}/${id}/${type}/${code}.json`);
         let result = res[code];
+        
         if (type === 'N'){ 
             return result[0];
         }
@@ -122,6 +142,41 @@ export const getProfileData = async(id: string, type: string, code: string, VMod
     return null;
 }
 
+export const getTicketWinnerSummary = async(id: string, type: string, code: string): Promise<TicketModel[]> => {
+    try {
+        const res: TicketGroupModel = await $fetch(`${TICKET_URL}/${id}/${type}/${code}.json`);
+        // return res[code].filter(e => (e.is_victor.trim() === '*'));
+        const resCode: Array<TicketModel> = res[code];
+        
+        const groupByCity = resCode.reduce( (_ticketObg: {[key: string]: TicketModel[]}, _ticket: TicketModel) => {
+            const { area_name } = _ticket;
+            _ticketObg[area_name] = _ticketObg[area_name] ?? [];
+            if(_ticket.is_vice.trim() === '') {
+                _ticketObg[area_name].push(_ticket);
+            }
+            return _ticketObg;
+        },{});
+
+        let result: TicketModel[] = [];
+        Object.values(groupByCity).forEach( val => {
+            let max: TicketModel = null;
+            val.forEach( (i: TicketModel) => {
+                if ( max === null) {
+                    max = i;
+                } else {
+                    max = (max.ticket_num < i.ticket_num ) ? i : max;
+                }
+            });
+            result.push(max);
+        });
+        return result;
+    } catch (error) {
+        console.error(error);
+    }
+    return [];
+}
+
+
 export const getTicketData = async(id: string, type: string, code: string, model?: AreaSelectedViewModel, liCode?: string, liModel?: AreaSelectedViewModel): Promise<TicketModel[]> => {
     try {
         const res: TicketGroupModel = await $fetch(`${TICKET_URL}/${id}/${type}/${code}.json`);
@@ -131,33 +186,15 @@ export const getTicketData = async(id: string, type: string, code: string, model
 
         let resultObj: TicketModel[] = res[code];
 
-        if (type === 'N') return resultObj;
+        if (type === 'N') {return resultObj;}
 
         if (type === 'L' && liCode) {
             resultObj = res[liCode];
         }
         
         if (type !== 'N') {
-            const condition = (tp: string, rs: TicketModel): boolean => {
-                let baseCondition = ( rs.prv_code === model?.prv_code && rs.city_code === model?.city_code);
-                if (tp === 'C') return baseCondition;
-                
-                if (tp !== 'C') {
-                    baseCondition = (
-                        baseCondition &&
-                        rs.area_code === model?.area_code && 
-                        rs.dept_code === model?.dept_code
-                )}
-
-                if (tp === 'L') {
-                    baseCondition = (
-                        baseCondition &&
-                        rs.li_code === liModel?.li_code
-                )}
-                return baseCondition;
-            }
-
-            return resultObj.filter( (r) => (condition(type, r) ));
+            console.log('Service: getTicketData:', resultObj.filter( (r) => (condition(type, r, model, liCode, liModel) )))
+            return resultObj.filter( (r) => (condition(type, r, model, liCode, liModel) ));
         }
     } catch (error) {
         console.error(error);

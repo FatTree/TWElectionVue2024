@@ -2,7 +2,8 @@
 import { storeToRefs } from 'pinia';
 import { useTicketStore } from '~/stores/useTicketStore';
 import { useAreaStore } from '~/stores/useAreaStore';
-import type { AreaSelectedViewModel }  from '~/viewModels/DataViewModel';
+import type { AreaSelectedViewModel, MapViewModel }  from '~/viewModels/DataViewModel';
+import { PARTY, COLOR, AREA } from '~/assets/enum/enum';
 
 type Props = {
     id: string;
@@ -14,6 +15,8 @@ const props = withDefaults(defineProps<Props>(), {
     type: 'C',
 });
 
+const mapResultList: Ref<MapViewModel[]> = ref([]);
+
 const areaStore = useAreaStore();
 const ticketStore = useTicketStore();
 const overallStore = useOverallStore();
@@ -21,17 +24,22 @@ const overallStore = useOverallStore();
 const {
     cityOption,
     selectedCity,
+    selectedDist,
+    selectedLi,
 } = storeToRefs(areaStore);
 
 const { getTicketList } = ticketStore;
 const { 
     sortedCityTicketList,
+    ticketMapList,
 } = storeToRefs(ticketStore);
 
 const {
     OAType,
     OACode,
     OAAreaVM,
+    OACCode,
+    OADCode,
 } = storeToRefs(overallStore);
 
 const cityPath = [
@@ -233,17 +241,56 @@ const clickMap = async (p: Array<string>) => {
         for( let x=0; x<p.length; x++) {
             if (city.area_name === p[x]) {
                 selectedCity.value = _areaVM;
+                selectedDist.value = null;
+                selectedLi.value = null;
                 OAAreaVM.value = _areaVM;
-                OAType.value = props.type;
-                await getTicketList(props.id, props.type, "00_000_00_000_0000", _areaVM);
+                OAType.value = AREA.CITY;
+                OACode.value = "00_000_00_000_0000";
+                OACCode.value = '';
+                OADCode.value = '';
+                await getTicketList(props.id, OAType.value, "00_000_00_000_0000", _areaVM);
             }
         }
     });
 }
+onMounted(() => {
+    const generateMapResultList = (): MapViewModel[] =>  {
+        const result: Array<MapViewModel> = [];
+        for(let i=0; i<cityPath.length; i++) {
+            const _city = cityPath[i];
+            const _cityName = _city.name;
+            ticketMapList.value.forEach((ticket) => {
+                if(_cityName.some((C) => (C === ticket.area_name))) {
+                    let fill = '';
+                    switch (ticket.party_name) {
+                        case PARTY.DPP:
+                            fill = COLOR.DPP;
+                            break;
+                        case PARTY.KMT:
+                            fill = COLOR.KMT;
+                            break;
+                        case PARTY.TPP:
+                            fill = COLOR.TPP;
+                            break;
+                        case PARTY.NP:
+                            fill = COLOR.NP;
+                            break;
+                        default:
+                            break;
+                    }
+                    const com = {..._city, party_name: ticket.party_name, fill}
+                    result.push(com)
+                }
+            })
+        }
+        return result;
+    }
+    mapResultList.value = generateMapResultList();
+});
 </script>
 <template>
     <svg width="510" height="700" viewBox="0 0 510 700" xmlns="http://www.w3.org/2000/svg">
-        <g v-for="(city, index) in cityPath" :key="index" v-html="city.path" @click="clickMap(city.name)"></g>
+        <g v-for="(city, index) in mapResultList" :key="index" :style="{fill: city.fill}" v-html="city.path" @click="clickMap(city.name)"></g>
     </svg>
 </template>
 

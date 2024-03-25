@@ -12,6 +12,7 @@ type Props = {
     list: TicketViewModel[];
     areaVM?: AreaSelectedViewModel;
     liVM?: AreaSelectedViewModel;
+    isOverall?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -19,23 +20,26 @@ const props = withDefaults(defineProps<Props>(), {
     type: AREA.NATION,
     code: '00_000_00_000_0000',
     list: ()=>([]),
+    isOverall: false,
 });
 
 const viewModel: Ref<AreaSelectedViewModel | undefined> = ref();
 
-if (props.liVM) {
-    viewModel.value = props.liVM;
-} else if (props.areaVM) {
-    viewModel.value = props.areaVM;
-}
+const profileStore = useProfileStore();
+
+const { 
+} = storeToRefs(profileStore);
 
 const sortedTicketList = computed( () => props.list.sort(sortTicketFun));
 const generatePie = (list: TicketViewModel[]) => {
+    console.log('Ticket.generatePie', list);
+    
     let prv_rate = 0;
     let conicValue = '';
     for(let i=0; i<list.length; i++) {
         let nowEl = list[i];
-        let nowRate = Math.round(nowEl.formatted_ticket_percent / 100 * 360);
+        let nowRate = Math.round((nowEl.formatted_ticket_percent / 100) * 360);
+        
         if (prv_rate === 0) {
             prv_rate = nowRate;
             conicValue = `${nowEl.party_color} 0deg, ${nowEl.party_color} ${prv_rate}deg`;
@@ -48,25 +52,32 @@ const generatePie = (list: TicketViewModel[]) => {
     return conicValue;
 }
 
-onUpdated(() => {
-    const pie = document.querySelector('#pie');
-    pie!.style.setProperty('--conicValue', generatePie(sortedTicketList.value));
-});
+watch(sortedTicketList, async () => {
+    console.log('Ticket: watch(sortedTicketList) changed!', sortedTicketList.value);
+    const pie: HTMLElement = document.querySelector('#pie')!;
+    pie.style.setProperty('--conicValue', generatePie(sortedTicketList.value));
+
+})
 
 onMounted(()=> {
-    const pie = document.querySelector('#pie');
-    pie!.style.setProperty('--conicValue', generatePie(sortedTicketList.value));
+    if (props.liVM) {
+        viewModel.value = props.liVM;
+    } else if (props.areaVM) {
+        viewModel.value = props.areaVM;
+    }
+    const pie: HTMLElement = document.querySelector('#pie')!;
+    pie.style.setProperty('--conicValue', generatePie(sortedTicketList.value));
 });
 
 </script>
 <template>
     <div class="ticketBox">
-        <h3 v-if="liVM">{{ liVM?.areaCode }} - {{ liVM?.areaName }}</h3>
-        <h3 v-else-if="areaVM">{{ areaVM.areaCode }} - {{ areaVM.areaName }}</h3>
-        <div v-if="type===AREA.NATION">
-            <div id="pie" style="--conicValue: 270deg">
-                <div class="pie__center"></div>
-            </div>
+        <h3 v-if="liVM">{{ liVM?.areaName }}</h3>
+        <h3 v-else-if="areaVM">{{ areaVM.areaName }}</h3>
+        <!-- <h3 v-if="liVM">{{ liVM?.areaCode }} - {{ liVM?.areaName }}</h3>
+        <h3 v-else-if="areaVM">{{ areaVM.areaCode }} - {{ areaVM.areaName }}</h3> -->
+        <div v-if="isOverall" id="pie" style="--conicValue: 270deg">
+            <div class="pie__center"></div>
         </div>
         <div class="ticket" v-for="(item, i) in sortedTicketList" :key="i">
             <div class="ticket__number">
@@ -78,7 +89,7 @@ onMounted(()=> {
             </div>
             <div class="ticket__result">
                 <p class="ticket__result__ticket">{{ item.formatted_ticket_num }}</p>
-                <p class="ticket__result__percent">{{ item.formatted_ticket_percent }}</p>
+                <p class="ticket__result__percent">{{ item.formatted_ticket_percent }} %</p>
             </div>
         </div>
     </div>

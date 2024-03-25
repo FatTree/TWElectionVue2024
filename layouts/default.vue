@@ -18,7 +18,8 @@ await getElectionList();
         <div class="layout__content">
             <div class="tabContainer">
                 <div class="tabContainer__wrapper">
-                    <NuxtLink class="tabContainer__wrapper__item" v-for=" (item, index) in electionList" 
+                    <NuxtLink class="tabContainer__wrapper__item" 
+                        v-for=" (item, index) in electionList" 
                         :key="index" 
                         :to="{
                             name: 'id-type-code',
@@ -26,8 +27,9 @@ await getElectionList();
                                 id: item.theme_id,
                                 type: 'N',
                                 code: `${item.prv_code}_${item.city_code}_${item.area_code}_${item.dept_code}_${item.li_code}` 
-                            },
-                        }">{{ item.theme_name }}</NuxtLink>
+                            },}">
+                            {{ item.theme_name }}
+                    </NuxtLink>
                 </div>
             </div>
             <slot></slot>
@@ -41,6 +43,7 @@ await getElectionList();
 
 @mixin mobile {
     @media(max-width:768px){
+        width: 100%;
         @content;
     }
 }

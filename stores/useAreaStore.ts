@@ -4,9 +4,9 @@ import type { AreaModel } from '~/models/DataModel';
 import { getAreaData } from '~/services/DataService';
 import { areaFormatter } from '~/formatters/DataFormatter';
 import type { AreaSelectedViewModel } from '~/viewModels/DataViewModel';
+import { AREA } from '~/assets/enum/enum';
 
 const storeName = 'area';
-
 export const useAreaStore = defineStore(storeName, () => {
     const cityList = ref<AreaModel[]>([]);
     const districtList = ref<AreaModel[]>([]);
@@ -15,31 +15,16 @@ export const useAreaStore = defineStore(storeName, () => {
     const selectedDist = ref<AreaSelectedViewModel | null>();
     const selectedLi = ref<AreaSelectedViewModel | null>();
 
-    const setSelectedArea = (type: string, v: AreaSelectedViewModel) => {
-        switch (type) {
-            case "C":
-                selectedCity.value = v;
-                break;
-            case "D":
-                selectedDist.value = v;
-                break;
-            case "L":
-                selectedLi.value = v;
-            default:
-                break;
-        }
-    }
-
     const getAreaList = async(id: string, type: string, code: string, liCode?: string) => {
         switch (type) {
-            case "C":
-                cityList.value = await getAreaData(id, "C", code);
+            case AREA.CITY:
+                cityList.value = await getAreaData(id, AREA.CITY, code);
                 break;
-            case "D":
-                districtList.value = await getAreaData(id, "D", code);
+            case AREA.DISC:
+                districtList.value = await getAreaData(id, AREA.DISC, code);
                 break;
-            case "L":
-                liList.value = await getAreaData(id, "L", code, liCode);
+            case AREA.VLI:
+                liList.value = await getAreaData(id, AREA.VLI, code, liCode);
             default:
                 break;
         }
@@ -74,6 +59,5 @@ export const useAreaStore = defineStore(storeName, () => {
         selectedDist,
         selectedLi,
         getAreaList,
-        setSelectedArea,
     }
 });

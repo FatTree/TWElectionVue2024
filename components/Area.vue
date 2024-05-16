@@ -48,7 +48,7 @@ const {
 } = storeToRefs(overallStore);
 
 const selectedArea: Ref<AreaSelectedViewModel | undefined> = ref();
-
+const selectedVal: Ref<string> = ref('');
 
 const emit = defineEmits([
     'emitAreaCode'
@@ -58,8 +58,7 @@ watch( selectedArea,  async(v) => {
     emit('emitAreaCode', selectedArea.value);
     if ( props.type === 'C' || props.type === 'D') {
         await getTicketList(props.id, props.type, props.code, selectedArea.value);
-    }
-    if (props.type === 'L') {
+    } else if (props.type === 'L') {
         await getTicketList(props.id, props.type, props.code, selectedArea.value, props.liCode, selectedLi.value!);
     }
     
@@ -77,14 +76,62 @@ watch( selectedArea,  async(v) => {
             OAList.value = ticketNationViewList.value.sort(sortTicketFun);
             break;
     }
-    console.log('Area(after): OAList', OAList.value);
 });
+
+const clickSelect = (ev:Event) => {
+    if (!props.optList.length) return;
+
+    const _select = ev.currentTarget;
+    const _options = _select.querySelector('div.select__options')
+    
+    _options.classList.toggle('none');
+    _select.classList.toggle('select--selected');
+}
+
+const blurSelect = (ev: Event) => {
+    // console.log('blur', ev);
+    const _select = ev.currentTarget;
+    const _options = _select.querySelector('div.select__options')
+    if(!_options.classList.contains('none')) {
+        _select.classList.toggle('select--selected');
+        _options.classList.toggle('none');
+    }
+}
+
+const clickOption = (v: AreaViewModel) => {
+    selectedVal.value = v.area_name;
+    selectedArea.value = {
+        prv_code: v.prv_code,
+        city_code: v.city_code,
+        area_code: v.area_code,
+        dept_code: v.dept_code,
+        li_code: v.li_code,
+        areaCode: v.areaCode,
+        areaName: v.area_name};
+}
+
+watch( () => props.optList, () => {
+    selectedVal.value = '--';
+})
 
 </script>
 <template>
-    <div>
+    <div class="select" 
+            tabindex="0"
+            @click="clickSelect($event)"
+            @blur="blurSelect($event)"
+            :class="optList.length ? '' : 'disabled'">
+        <div class="selected">{{ selectedVal ? selectedVal : '--' }}</div>
+        <div class="select__options none">
+            <div class="options__option" 
+                v-for="item in optList" 
+                @click="clickOption(item)"
+                :value="item.area_name">
+                    {{ item.area_name }}
+            </div>
+        </div>
         <select v-model="selectedArea">
-            <option selected :value="undefined" disabled>請選擇</option>
+            <option :value="undefined" disabled>Select car:</option>
             <option v-for="(item, i) in optList" :key="i"
                 :value="{
                     prv_code: item.prv_code,
@@ -93,11 +140,116 @@ watch( selectedArea,  async(v) => {
                     dept_code: item.dept_code,
                     li_code: item.li_code,
                     areaCode: item.areaCode,
-                    areaName: item.area_name
-                }">{{ item.area_name }}</option>
-            <!-- {{ item.areaCode }}-{{ item.area_name }} -->
+                    areaName: item.area_name}">
+                    {{ item.area_name }}
+            </option>
         </select>
     </div>
-    
-    <!-- <button @click="selectedArea=undefined;">X</button> -->
 </template>
+
+
+<style lang="scss" scoped>
+@import '../assets/_color';
+@import '../assets/_font';
+@import '../assets/_share';
+
+@mixin pad {
+    @media(max-width: 1100px) {
+        @content;
+    }
+}
+@mixin mobile {
+    @media(max-width:768px){
+        @content;
+    }
+}
+
+.select {
+    border: 1px solid $white-normal-hover;
+    border-radius: 8px;
+    background-color: #fff;
+    cursor: pointer;
+    height: 35px;
+    min-width: 9em;
+    position: relative;
+    /* margin-right: .6em; */
+
+    &:not(:last-child) {
+        margin-right: 1em;
+    }
+    
+    @include pad {
+        &:first-child {
+            margin-right: 0;
+        }
+    }
+
+    &--selected {
+        border: 1px solid $indigo-normal;
+    }
+
+    &::after {
+        position: absolute;
+        content: '';
+        width: 24px;
+        height: 24px;
+        background-image: url(/_nuxt/assets/png/right-arrow.png);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 16px;
+        rotate: 90deg;
+        right: 0.4em;
+        top: 0.4em;
+    }
+
+    &.disabled {
+        background-color: $white-normal-hover;
+        cursor: not-allowed;
+
+        > .selected {
+            color: $white-dark;
+        }
+
+        &::after {
+            opacity: 10%;
+        }
+    }
+
+    > select {
+        display: none;
+    }
+
+    > .selected {
+        position: absolute;
+        top: 0;
+        left: 0;
+        @include select-T;
+        padding: .2em .5em;
+    }
+
+    > .select__options.none {
+        display: none;
+    }
+    > .select__options {
+        border: 1px solid $indigo-normal;
+        background-color: #fff;
+        border-radius: 8px;
+        position: absolute;
+        top: 40px;
+        width: 100%;
+        overflow-y: scroll;
+        z-index: 10;
+        /* height: 65vh; */
+
+        .options__option {
+            @include select-T;
+            padding: .3em;
+
+            &:hover {
+                background-color: $white-normal-hover;
+            }
+        }
+    }
+}
+
+</style>

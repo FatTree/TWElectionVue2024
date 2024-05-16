@@ -44,23 +44,30 @@ watch( OAAreaVM, async() => {
     }
 });
 
+const deg = ref(`90deg`);
+const pieBG = computed(() => (`conic-gradient(#262E49 0, #262E49 ${deg.value}, #BFBFBF ${deg.value})`))
+
 watch(formatted_vote_to_elect, () => {
-    const pie: HTMLElement = document.querySelector('.pie')!;
-    pie.style.setProperty('--deg', `${formatted_vote_to_elect.value / 100 * 360}deg`);
+    deg.value = `${formatted_vote_to_elect.value / 100 * 360}deg`;
 });
 
 await getProfileList(props.id, props.type, props.code);
+
+onMounted( async() => {
+    deg.value = `${formatted_vote_to_elect.value / 100 * 360}deg`;
+})
+
 
 </script>
 <template>
     <div class="profile">
         <!-- <h1 class="profile__title">投票概況 </h1> -->
         <div class="profile__top">
-            <div class="pie" style="--deg: 270deg">
+            <div id="pie1" class="pie" :style="{background: pieBG}">
                 <div class="pie__center"></div>
             </div>
             <div class="profile__top__rate">
-                <p class="number">{{ formatted_vote_to_elect }} %</p>
+                <p class="number">{{ formatted_vote_to_elect }}%</p>
                 <p class="word">投票率</p>
             </div>
         </div>
@@ -76,18 +83,34 @@ await getProfileList(props.id, props.type, props.code);
 <style lang="scss" scoped>
 @import '../assets/_color';
 @import '../assets/_font';
+@import '../assets/_share';
 /* :root {
     --theAngle: 45deg;
 } */
-
-@keyframes spin {
-	to { transform: rotate(.5turn); }
+@mixin pad {
+    @media(max-width: 1100px) {
+        @content;
+    }
 }
 
-@keyframes bg {
-	50% { background: #655; }
+@mixin mobile {
+    @media(max-width:768px){
+        @content;
+    }
 }
 .profile {
+    display: grid;
+    row-gap: 20px;
+    
+    @include pad {
+        display: grid;
+        row-gap: 0;
+    }
+
+    @include mobile {
+        display: flex;
+        gap: 12px
+    }
     &__title {
         font-size: 20px;
         font-weight: 600;
@@ -97,28 +120,9 @@ await getProfileList(props.id, props.type, props.code);
 
     &__top {
         display: flex;
-        margin-bottom: 20px;
+        /* margin-bottom: 20px; */
 
-        > .pie {
-            --deg: 45deg;
-            min-width: 120px;
-            min-height: 120px;
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: conic-gradient($indigo-normal 0, $indigo-normal var(--deg), $white-dark var(--deg));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            /* animation: spin 3s linear infinite, bg 6s step-end infinite; */
-
-            > .pie__center {
-                width: 70px;
-                height: 70px;
-                border-radius: 50%;
-                background-color: $white-normal;
-            }
-        }
+        @include pie;
 
         &__rate {
             display: flex;
@@ -135,14 +139,12 @@ await getProfileList(props.id, props.type, props.code);
         }
     }
     &__buttom {
-        margin-bottom: 20px;
-
         > P {
             @include T-RG;
             @include fontWeight-regular;
             
             &:not(:last-child) {
-                margin-bottom: 8px;
+                margin-bottom: .5em;
             }
 
             > label {

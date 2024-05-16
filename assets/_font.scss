@@ -1,5 +1,11 @@
+@mixin pad {
+    @media(max-width: 960px) {
+        @content;
+    }
+}
+
 @mixin mobile {
-    @media(max-width:768px){
+    @media(max-width:720px){
         @content;
     }
 }
@@ -14,6 +20,7 @@
 
 @mixin fontWeight-blod {
     font-weight: 600;
+    letter-spacing: 1px;
 }
 
 @mixin fontWeight-regular {
@@ -27,7 +34,18 @@
 
     @include mobile {
         font-size: 16px;
+        font-weight: 700;
     }
+}
+
+@mixin Title-B {
+    @include fontWeight-blod;
+    font-size: 16px;
+}
+
+@mixin Title-B-12 {
+    @include fontWeight-blod;
+    font-size: 12px;
 }
 
 @mixin T-LG {
@@ -36,6 +54,12 @@
     @include mobile {
         font-size: 16px;
     }
+}
+
+@mixin select-T {
+    font-size: 20px;
+    line-height: 28px;
+    @include fontWeight-regular;
 }
 
 @mixin T-RG {
@@ -49,7 +73,5 @@
 @mixin T-XS {
     font-size: 12px;
     @include lineHeight;
-    @include mobile {
-        font-size: 11px;
-    }
+    @include fontWeight-regular;
 }

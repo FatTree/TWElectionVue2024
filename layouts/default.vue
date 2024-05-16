@@ -43,7 +43,6 @@ await getElectionList();
 
 @mixin mobile {
     @media(max-width:768px){
-        width: 100%;
         @content;
     }
 }
@@ -53,6 +52,9 @@ await getElectionList();
     &__nav {
         background-color: $indigo-normal;
         height: 72px;
+        position: fixed;
+        width: 100%;
+        top:0;
 
         &__title {
             color: $white-normal;
@@ -63,12 +65,20 @@ await getElectionList();
         }
 
         @include mobile {
-            height: 64px;
+            height: 72px;
         }
     }
 
     &__content {
         padding: 30px 35px;
+        margin-top: 72px;
+        height: calc(100vh - 72px);
+        overflow-y: auto;
+
+        @include mobile {
+
+            padding: 30px 14px;
+        }
 
         & .tabContainer {
             touch-action: pan-y;

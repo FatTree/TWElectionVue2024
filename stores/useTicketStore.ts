@@ -37,7 +37,6 @@ export const useTicketStore = defineStore( storeName, () => {
 
     const getTicketList = async(id: string, type: string, code: string, model?: AreaSelectedViewModel, liCode?: string, liModel?: AreaSelectedViewModel) => {
         let _list = await getTicketData(id, type, code, model, liCode, liModel);
-        
         switch (type) {
             case AREA.CITY:
                 ticketCityList.value = _list;

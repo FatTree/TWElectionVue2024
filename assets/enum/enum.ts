@@ -8,8 +8,8 @@ export enum PARTY {
 
 export enum COLOR {
     KMT = '#8894D8',
-    DPP = '#84CB98',
-    TPP = '#D9EFDF',
+    DPP = '#6AA27A',
+    TPP = '#84CB98',
     NP = '#DFA175',
     OTHER = '#BFBFBF',
 }

@@ -46,6 +46,7 @@ import { LazyProfile } from "#build/components";
 import { Logger } from "sass";
 import type { AreaGroupModel, AreaModel, ElectionGroupModel, ElectionModel, ProfileGroupModel, ProfileModel, TicketGroupModel, TicketModel } from "~/models/DataModel";
 import type { AreaSelectedViewModel } from "~/viewModels/DataViewModel";
+import { AREA } from '~/assets/enum/enum';
 
 const ELECTION_LIST_URL = 'https://db.cec.gov.tw/static/elections/list/ELC_P0.json';
 const TICKET_URL = 'https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00';
@@ -74,16 +75,16 @@ const PROFILE_URL = 'https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0
 
 const condition = (tp: string, rs: TicketModel, model?: AreaSelectedViewModel, liCode?: string, liModel?: AreaSelectedViewModel): boolean => {
     let baseCondition = ( rs.prv_code === model?.prv_code && rs.city_code === model?.city_code);
-    if (tp === 'C') return baseCondition;
+    if (tp === AREA.CITY) return baseCondition;
     
-    if (tp !== 'C') {
+    if (tp !== AREA.CITY) {
         baseCondition = (
             baseCondition &&
             rs.area_code === model?.area_code && 
             rs.dept_code === model?.dept_code
     )}
 
-    if (tp === 'L') {
+    if (tp === AREA.VLI) {
         baseCondition = (
             baseCondition &&
             rs.li_code === liModel?.li_code
@@ -186,14 +187,13 @@ export const getTicketData = async(id: string, type: string, code: string, model
 
         let resultObj: TicketModel[] = res[code];
 
-        if (type === 'N') {return resultObj;}
+        if (type === AREA.NATION) {return resultObj;}
 
-        if (type === 'L' && liCode) {
+        if (type === AREA.VLI && liCode) {
             resultObj = res[liCode];
         }
         
-        if (type !== 'N') {
-            console.log('Service: getTicketData:', resultObj.filter( (r) => (condition(type, r, model, liCode, liModel) )))
+        if (type !== AREA.NATION) {
             return resultObj.filter( (r) => (condition(type, r, model, liCode, liModel) ));
         }
     } catch (error) {

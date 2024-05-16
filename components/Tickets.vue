@@ -30,10 +30,16 @@ const profileStore = useProfileStore();
 const { 
 } = storeToRefs(profileStore);
 
+
+const pieContent = ref('generatePie');
+const pieBG = computed(() => (`conic-gradient(${pieContent.value})`));
 const sortedTicketList = computed( () => props.list.sort(sortTicketFun));
+const outBoxCss = reactive({
+    bgc: 'red',
+    bdrc: "green"
+});
+
 const generatePie = (list: TicketViewModel[]) => {
-    console.log('Ticket.generatePie', list);
-    
     let prv_rate = 0;
     let conicValue = '';
     for(let i=0; i<list.length; i++) {
@@ -43,21 +49,37 @@ const generatePie = (list: TicketViewModel[]) => {
         if (prv_rate === 0) {
             prv_rate = nowRate;
             conicValue = `${nowEl.party_color} 0deg, ${nowEl.party_color} ${prv_rate}deg`;
+            outBoxCss.bdrc = nowEl.party_color;
+            switch (outBoxCss.bdrc) {
+                case '#8894D8':
+                    outBoxCss.bgc = '#edeff9';
+                    break;
+                case '#6AA27A':
+                    outBoxCss.bgc = '#d9efdf';
+                    break;
+                case '#84CB98':
+                    outBoxCss.bgc = '#EDF7F0';
+                    break;
+                case '#DFA175':
+                    outBoxCss.bgc = '#faf1ea';
+                    break;
+                default:
+                    outBoxCss.bgc = '#BFBFBF'
+                    break;
+            }
+            
         } else {
             conicValue += `, ${nowEl.party_color} ${prv_rate}deg, ${nowEl.party_color} ${prv_rate + nowRate}deg`
             prv_rate += nowRate;
         }
     }
-    
+
     return conicValue;
 }
 
-watch(sortedTicketList, async () => {
-    console.log('Ticket: watch(sortedTicketList) changed!', sortedTicketList.value);
-    const pie: HTMLElement = document.querySelector('#pie')!;
-    pie.style.setProperty('--conicValue', generatePie(sortedTicketList.value));
-
-})
+watch(sortedTicketList, () => {
+    pieContent.value = generatePie(sortedTicketList.value);
+});
 
 onMounted(()=> {
     if (props.liVM) {
@@ -65,31 +87,34 @@ onMounted(()=> {
     } else if (props.areaVM) {
         viewModel.value = props.areaVM;
     }
-    const pie: HTMLElement = document.querySelector('#pie')!;
-    pie.style.setProperty('--conicValue', generatePie(sortedTicketList.value));
+    pieContent.value = generatePie(sortedTicketList.value);
+    // outBoxCss.bdrc = sortedTicketList.value[0].party_color;
 });
 
 </script>
 <template>
-    <div class="ticketBox">
-        <h3 v-if="liVM">{{ liVM?.areaName }}</h3>
-        <h3 v-else-if="areaVM">{{ areaVM.areaName }}</h3>
+    <div class="ticketBox" :class="[isOverall ? 'ticketBox--overall' : '']" :style="[isOverall ? {backgroundColor: 'none'} : {backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}]">
+        <h6 class="ticketTitle" v-if="liVM">{{ liVM?.areaName }}</h6>
+        <h6 class="ticketTitle" v-else-if="areaVM">{{ areaVM.areaName }}</h6>
         <!-- <h3 v-if="liVM">{{ liVM?.areaCode }} - {{ liVM?.areaName }}</h3>
         <h3 v-else-if="areaVM">{{ areaVM.areaCode }} - {{ areaVM.areaName }}</h3> -->
-        <div v-if="isOverall" id="pie" style="--conicValue: 270deg">
+        <div v-if="isOverall" class="pie" :style="{background: pieBG}">
             <div class="pie__center"></div>
         </div>
-        <div class="ticket" v-for="(item, i) in sortedTicketList" :key="i">
-            <div class="ticket__number">
-                <p>{{ item.cand_no }}</p>
-            </div>
-            <div class="ticket__name">
-                <p class="ticket__name__party">{{ item.party_name }}</p>
-                <p class="ticket__name__cand">{{ item.cand_name }} | {{ item.vice }}</p>
-            </div>
-            <div class="ticket__result">
-                <p class="ticket__result__ticket">{{ item.formatted_ticket_num }}</p>
-                <p class="ticket__result__percent">{{ item.formatted_ticket_percent }} %</p>
+        <div class="ticketGroup" :class="[isOverall ? 'ticketGroup--overall' : '']">
+            <div class="ticket"  :class="[isOverall ? 'ticket--overall' : '']"
+                v-for="(item, i) in sortedTicketList" :key="i">
+                <div class="ticket__number">
+                    <p :style="{ backgroundColor: item.party_color }">{{ item.cand_no }}</p>
+                </div>
+                <div class="ticket__name" :style="{ borderRightColor: item.party_color }">
+                    <h6 class="ticket__name__party" :class="[isOverall ? 'ticket__name__party--overall' : '']">{{ item.party_name }}</h6>
+                    <p class="ticket__name__cand" :class="[isOverall ? 'ticket__name__cand--overall' : '']">{{ item.cand_name }} | {{ item.vice }}</p>
+                </div>
+                <div class="ticket__result">
+                    <p class="ticket__result__percent" :class="[isOverall ? 'ticket__result__percent--overall' : '']">{{ item.formatted_ticket_percent }} %</p>
+                    <p class="ticket__result__ticket" :class="[isOverall ? 'ticket__result__ticket--overall' : '']">{{ item.formatted_ticket_num }}</p>
+                </div>
             </div>
         </div>
     </div>
@@ -98,65 +123,140 @@ onMounted(()=> {
 <style lang="scss">
 @import '../assets/_color';
 @import '../assets/_font';
+@import '../assets/_share';
 
-.ticketBox {
-    #pie {
-        --conicValue: #{$indigo-normal} 0, #{$indigo-normal} 20deg, #{$white-dark} 20deg, #{$white-dark} 80deg, red 80deg, red 160deg, yellow 160deg;
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        background: conic-gradient(var(--conicValue));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        > .pie__center {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background-color: $white-normal;
-        }
+@mixin pad {
+    @media(max-width: 1100px) {
+        @content;
     }
-    .ticket {
-        display: flex;
-        /* > div:not(:last-child) {
-            margin-right: 1em;
-            margin-bottom: 1em;
-        } */
-    
-        &__number {
-            display: flex;
-            align-items: center;
-            margin: 0 1em 1em 0;
-            /* justify-content: center; */
-            > p {
-                width: 24px;
-                height: 24px;
-                border-radius: 50%;
-                border: 1px solid #000;
-                text-align: center;
-            }
-        }
-    
-        &__name {
-            margin: 0.5em 0.5em 1em 0;
-            padding-right: 1em;
-            border-right: 3px solid #000;
-            &__party{
-                @include T-RG;
-                @include fontWeight-blod;
-            }
-    
-            &__cand {
-                @include T-XS;
-                @include fontWeight-regular;
-            }
-        }
-    
-        &__result {
-            margin: 0 0 1em .5em;
-        }
+}
+@mixin mobile {
+    @media(max-width:768px){
+        @content;
     }
 }
 
+.ticketBox {
+    display: grid;
+    row-gap: 12px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    min-width: 250px;
+
+    @include pie;
+    /* @include pad {
+        display: flex;
+    }
+    @include mobile {
+        margin-top: 2em;
+        align-items: center;
+        display: flex;
+        row-gap: 20px;
+    } */
+
+    &--overall {
+        background-color: none;
+        padding: 2em 0 0;
+
+        @include pad {
+            padding-top: 0;
+            display: block;
+        }
+
+        @include mobile {
+            margin-top: 2em;
+            align-items: center;
+            display: flex;
+            row-gap: 20px;
+        }
+    }
+
+    > .ticketTitle {
+        @include h6;
+    }
+
+    
+    > .ticketGroup {
+        display: block;
+
+        @include pad {
+            margin-left: 0;
+        }
+
+        &--overall {
+            @include mobile {
+                margin-left: 20px;
+            }
+        }
+        
+        > .ticket {
+            display: flex;
+            &:not(:first-child) {
+                margin-top: 1em;
+            }
+            + .ticket--overall {
+                @include mobile {
+                    &:not(:first-child) {
+                        margin-top: .5em;
+                    }
+                }
+            }
+        
+            > .ticket__number {
+                display: flex;
+                align-items: center;
+                margin-right: 1em;
+                
+                > p {
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    text-align: center;
+                    color: $white-normal;
+                }
+            }
+        
+            > .ticket__name {
+                margin-right: 1em;
+                border-right: 3px solid #000;
+                min-width: 104px;
+                max-width: 104px;
+                > .ticket__name__party {
+                    @include Title-B;
+                }
+
+                @include mobile {
+                    > .ticket__name__party--overall {
+                        @include Title-B-12;
+                    }
+                }
+        
+                > .ticket__name__cand {
+                    @include T-XS;
+                    @include fontWeight-regular;
+                    +--overall {
+                        @include T-XS;
+                    }
+                }
+            }
+
+            >.ticket__result {
+                > .ticket__result__percent {
+                    @include Title-B;
+                }
+                @include mobile {
+                    > .ticket__result__percent--overall {
+                        @include Title-B-12;
+                    }
+                }
+                > .ticket__result__ticket {
+                    @include T-XS;
+                    +--overall {
+                        @include T-XS;
+                    }
+                }
+            }
+        }
+    }
+}
 </style>

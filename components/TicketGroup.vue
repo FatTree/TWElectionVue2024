@@ -11,8 +11,6 @@ const {
     ticketLiViewList,
 } = storeToRefs(store);
 
-const { } = areaStore;
-
 const {
     selectedCity,
     selectedDist,
@@ -33,7 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 </script>
 <template>
-    <div class="hints" v-if="!selectedCity && !selectedDist && !selectedDist">
+    <div class="hints outBox" v-if="!selectedCity && !selectedDist && !selectedDist">
         <div class="hint">
             <div class="hint__top">
                 <h3>小提示</h3>
@@ -57,7 +55,7 @@ const props = withDefaults(defineProps<Props>(), {
             </div>
         </div>
     </div>
-    <div v-else>
+    <div class="outBox" v-else>
         <Tickets :id="id" type="C" :code="code" :list="ticketCityViewList" :areaVM="selectedCity" v-if="selectedCity" />
         <Tickets :id="id" type="D" :code="selectedCity?.areaCode" :list="ticketDistViewList" :areaVM="selectedDist!" v-if="ticketDistViewList.length && selectedDist" />
         <Tickets :id="id" type="L" :code="selectedCity?.areaCode" :list="ticketLiViewList" :areaVM="selectedDist!" :liVM="selectedLi!" v-if="selectedLi" />
@@ -65,12 +63,33 @@ const props = withDefaults(defineProps<Props>(), {
     
 </template>
 <style lang="scss">
-.hints {
-    display: grid;
-    row-gap: 20px;
+@mixin pad {
+    @media(max-width: 1100px) {
+        @content;
+    }
+}
+@mixin mobile {
+    @media(max-width:768px){
+        width: 100%;
+        @content;
+    }
+}
 
+.outBox {
+    display: grid;
+    gap: 20px;
+
+    @include pad {
+        display: flex;
+        justify-content: flex-start;
+        overflow-x: auto;
+        height: 230px;
+    }
+}
+
+.hints {
     .hint {
-        width: 260px;
+        min-width: 260px;
         height: 249px;
         background-color: #DEE0E4;
         border-radius: 8px;
@@ -85,5 +104,7 @@ const props = withDefaults(defineProps<Props>(), {
         }
     }
 }
+
+
 
 </style>

@@ -28,7 +28,7 @@ button, input[type="button"], input[type="reset"], input[type="submit"] {
     color: #fff;
     cursor: pointer;
     font-size: 100%;
-    padding: 10px 20px;
+    /* padding: 10px 20px; */
 }
 
 /* Make sure all textareas are resizable by default */

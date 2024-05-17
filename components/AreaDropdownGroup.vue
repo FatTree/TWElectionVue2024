@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { AreaSelectedViewModel, AreaViewModel } from "~/viewModels/DataViewModel";
+import { useProfileStore } from '~/stores/useProfileStore';
 
 type Props = {
     id: string;
@@ -18,6 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const areaStore = useAreaStore();
 const ticketStore = useTicketStore();
+const profileStore = useProfileStore();
 const overallStore = useOverallStore();
 const {
     cityOption,
@@ -34,6 +36,11 @@ const {
 } = areaStore;
 
 const {
+    getProfileList,
+} = profileStore;
+
+const {
+    ticketNationViewList,
     ticketDistViewList,
     ticketLiViewList,
 } = storeToRefs(ticketStore);
@@ -42,6 +49,7 @@ const {
     OAAreaVM,
     OAType,
     OACode,
+    OAList,
     OALiCode,
     OACCode,
     OADCode,
@@ -77,12 +85,18 @@ const handleLCode = (LModel: AreaSelectedViewModel) => {
     selectedLi.value = LModel;
 }
 
-const clearSelectedArea = () => {
+const clearSelectedArea = async () => {
+    districtOption.value = undefined;
+    liOption.value = undefined;
     selectedCity.value = undefined;
     selectedDist.value = undefined;
     selectedLi.value = undefined;
     OADCode.value = '';
     OACCode.value = '';
+    OAType.value = 'N';
+    OACode.value = props.code;
+    OAList.value = ticketNationViewList.value;
+    await getProfileList(props.id, props.type, props.code);
 }
 
 const clearArea = (selectedArea: Ref<AreaSelectedViewModel|undefined>, code: Ref<string>) => {
@@ -108,13 +122,12 @@ onBeforeMount( async() => {
 
 </script>
 <template>
-    <!-- <Select :optionList="['aaa', 'ddd', 'dsaf']" /> -->
     <div class="area">
         <div class="area__block">
-            <Area :id="id" class="option__block" type="C" :code="code" :optList="cityOption"  @emit-area-code="handleCCode" />
+            <Area :id="id" class="option__block" type="C" :code="code" :optList="cityOption" :selectedV="selectedCity?.areaName" @emit-area-code="handleCCode" />
             <div class="option__block2">
-                <Area :id="id" class="option__block__element" type="D" :code="OACCode" :optList="districtOption" @emit-area-code="handleDCode" />
-                <Area :id="id" class="option__block__element" type="L" :code="OACCode" :liCode="OADCode" :optList="liOption" @emit-area-code="handleLCode" />
+                <Area :id="id" class="option__block__element" type="D" :code="OACCode" :optList="districtOption" :selectedV="selectedDist?.areaName" @emit-area-code="handleDCode" />
+                <Area :id="id" class="option__block__element" type="L" :code="OACCode" :liCode="OADCode" :optList="liOption" :selectedV="selectedLi?.areaName"  @emit-area-code="handleLCode" />
             </div>
         </div>
         <button @click="clearSelectedArea" class="area__clear">
@@ -161,10 +174,6 @@ onBeforeMount( async() => {
 
             > .select {
                 width: 49%;
-            }
-
-            &__element {
-                /* width: 48%; */
             }
         }
     }

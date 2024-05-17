@@ -8,9 +8,9 @@ import { AREA } from '~/assets/enum/enum';
 
 const storeName = 'area';
 export const useAreaStore = defineStore(storeName, () => {
-    const cityList = ref<AreaModel[]>([]);
-    const districtList = ref<AreaModel[]>([]);
-    const liList = ref<AreaModel[]>([]);
+    const cityList = ref<AreaModel[] | undefined>([]);
+    const districtList = ref<AreaModel[] | undefined>([]);
+    const liList = ref<AreaModel[] | undefined>([]);
     const selectedCity = ref<AreaSelectedViewModel | null>();
     const selectedDist = ref<AreaSelectedViewModel | null>();
     const selectedLi = ref<AreaSelectedViewModel | null>();
@@ -31,19 +31,24 @@ export const useAreaStore = defineStore(storeName, () => {
     }
 
     const cityOption = computed(() => {
-        return cityList.value.map( (e: AreaModel) => (areaFormatter(e)) );
+        return cityList.value ? cityList.value.map( (e: AreaModel) => (areaFormatter(e)) ) : undefined;
     });
 
-    const districtOption = computed(() => {
-        return districtList.value.map( (e: AreaModel) => (areaFormatter(e)) );
+    const districtOption = computed({
+        get () {
+            return districtList.value ? districtList.value.map( (e: AreaModel) => (areaFormatter(e)) ) : undefined;
+        },
+        set (v) {
+            districtList.value ? districtList.value = v : undefined;
+        }
     });
 
     const liOption = computed({
         get () {
-            return liList.value.map( (e: AreaModel) => (areaFormatter(e)) );
+            return liList.value ? liList.value.map( (e: AreaModel) => (areaFormatter(e)) ) : undefined;
         },
         set (v) {
-            liList.value = v;
+            liList.value ? liList.value = v : undefined;
         }
     });
 

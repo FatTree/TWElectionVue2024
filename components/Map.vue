@@ -19,6 +19,7 @@ const mapResultList: Ref<MapViewModel[]> = ref([]);
 
 const areaStore = useAreaStore();
 const ticketStore = useTicketStore();
+const profilrStore = useProfileStore();
 const overallStore = useOverallStore();
 
 const {
@@ -33,6 +34,9 @@ const {
     sortedCityTicketList,
     ticketMapList,
 } = storeToRefs(ticketStore);
+
+
+const { getProfileList } = profilrStore;
 
 const {
     OAType,
@@ -242,6 +246,7 @@ const clickMap = async (p: Array<string>) => {
                 OACCode.value = '';
                 OADCode.value = '';
                 await getTicketList(props.id, OAType.value, "00_000_00_000_0000", _areaVM);
+                // await getProfileList(props.id, OAType.value, "00_000_00_000_0000", _areaVM);
             }
         }
     });
@@ -287,6 +292,8 @@ onMounted(() => {
     </svg>
 </template>
 
-<style>
-
+<style scope>
+g {
+    cursor: pointer;
+}
 </style>

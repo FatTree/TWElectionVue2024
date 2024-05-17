@@ -8,6 +8,7 @@ type Props = {
     id: string;
     type: string;
     optList: AreaViewModel[];
+    selectedV?: string | undefined;
     code?: string;
     liCode?: string;
 }
@@ -16,6 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
     id: '',
     type: '',
     code: '',
+    selectedV: '',
     optList: () => ([]),
     liCode: '',
 });
@@ -48,7 +50,6 @@ const {
 } = storeToRefs(overallStore);
 
 const selectedArea: Ref<AreaSelectedViewModel | undefined> = ref();
-const selectedVal: Ref<string> = ref('');
 
 const emit = defineEmits([
     'emitAreaCode'
@@ -99,7 +100,6 @@ const blurSelect = (ev: Event) => {
 }
 
 const clickOption = (v: AreaViewModel) => {
-    selectedVal.value = v.area_name;
     selectedArea.value = {
         prv_code: v.prv_code,
         city_code: v.city_code,
@@ -110,10 +110,6 @@ const clickOption = (v: AreaViewModel) => {
         areaName: v.area_name};
 }
 
-watch( () => props.optList, () => {
-    selectedVal.value = '--';
-})
-
 </script>
 <template>
     <div class="select" 
@@ -121,7 +117,7 @@ watch( () => props.optList, () => {
             @click="clickSelect($event)"
             @blur="blurSelect($event)"
             :class="optList.length ? '' : 'disabled'">
-        <div class="selected">{{ selectedVal ? selectedVal : '--' }}</div>
+        <div class="selected">{{ selectedV ? selectedV : '--' }}</div>
         <div class="select__options none">
             <div class="options__option" 
                 v-for="item in optList" 

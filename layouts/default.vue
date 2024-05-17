@@ -3,17 +3,19 @@ import { storeToRefs } from 'pinia';
 import { useElectionStore } from '~/stores/useElectionStore'
 
 
-// const store = useThemeStore();
 const store = useElectionStore();
 const { electionList } = storeToRefs(store);
 const { getElectionList } = store;
 await getElectionList();
 
+const d = new Date();
+const year = ref(d.getFullYear());
+
 </script>
 <template>
     <div class="layout">
         <div class="layout__nav">
-            <h3 class="layout__nav__title">2020 開票地圖</h3>
+            <h3 class="layout__nav__title">{{ year }} 開票地圖</h3>
         </div>
         <div class="layout__content">
             <div class="tabContainer">

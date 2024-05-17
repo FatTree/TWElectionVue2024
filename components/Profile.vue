@@ -61,7 +61,6 @@ onMounted( async() => {
 </script>
 <template>
     <div class="profile">
-        <!-- <h1 class="profile__title">投票概況 </h1> -->
         <div class="profile__top">
             <div id="pie1" class="pie" :style="{background: pieBG}">
                 <div class="pie__center"></div>

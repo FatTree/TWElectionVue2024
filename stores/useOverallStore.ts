@@ -16,10 +16,10 @@ export const useOverallStore = defineStore( storeName, () => {
     return {
         OAType,
         OACode,
-        OALiCode,
         OAList,
         OAAreaVM,
         OACCode,
         OADCode,
+        OALiCode,
     }
 });

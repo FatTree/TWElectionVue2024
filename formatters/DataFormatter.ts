@@ -2,8 +2,8 @@ import type { AreaModel, ElectionModel, ProfileModel, TicketModel } from "~/mode
 import type { AreaViewModel, BasicViewModel, ElectionviewModel, ProfileViewModel, TicketViewModel } from "~/viewModels/DataViewModel";
 import { PARTY, COLOR } from '~/assets/enum/enum';
 
-const mappingPartyColor = (partyName: string): string | number => {
-    let result: string | number = '';
+const mappingPartyColor = (partyName: string): string => {
+    let result: string  = '';
     switch (partyName) {
         case PARTY.DPP:
             result = COLOR.DPP;
@@ -68,9 +68,9 @@ export const ticketFormatter = (model: TicketModel[]): TicketViewModel[] => {
         const can: TicketModel = cand[i];
         const formatted_ticket_num = (can.ticket_num).toLocaleString('en');
         const formatted_ticket_percent = can.ticket_percent;
-        const vic: TicketModel = vice.find((e) => (e.cand_no === cand[i].cand_no));
+        const vic: TicketModel | undefined = vice.find((e) => (e.cand_no === cand[i].cand_no));
         const party_color = mappingPartyColor(can.party_name);
-        const group: TicketViewModel = {...can, vice: vic.cand_name, formatted_ticket_num, formatted_ticket_percent, party_color};
+        const group: TicketViewModel = {...can, vice: vic!.cand_name, formatted_ticket_num, formatted_ticket_percent, party_color};
         formattedModel.push(group);
     }
     

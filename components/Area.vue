@@ -79,20 +79,23 @@ watch( selectedArea,  async(v) => {
     }
 });
 
+
 const clickSelect = (ev:Event) => {
     if (!props.optList.length) return;
 
     const _select = ev.currentTarget;
-    const _options = _select.querySelector('div.select__options')
+    const _options = _select.querySelector('div.select__options');
+    const _bg = _select.querySelector('div.bg');
     
     _options.classList.toggle('none');
     _select.classList.toggle('select--selected');
+    _bg.classList.toggle('none');
 }
 
 const blurSelect = (ev: Event) => {
-    // console.log('blur', ev);
-    const _select = ev.currentTarget;
-    const _options = _select.querySelector('div.select__options')
+    const _select: EventTarget = ev.currentTarget!;
+    const _options = _select.querySelector('div.select__options');
+    
     if(!_options.classList.contains('none')) {
         _select.classList.toggle('select--selected');
         _options.classList.toggle('none');
@@ -110,12 +113,22 @@ const clickOption = (v: AreaViewModel) => {
         areaName: v.area_name};
 }
 
+const clickBP = (ev: Event) => {
+    const _bg: EventTarget = ev.currentTarget!;
+    const _options = _bg.parentNode.childNodes[1];
+    
+    ev.stopPropagation()
+    _bg.classList.toggle('none');
+    _options.classList.toggle('none');
+}
+
 </script>
 <template>
+    <!-- @blur="blurSelect($event)" -->
+            <!-- tabindex="0" -->
+    
     <div class="select" 
-            tabindex="0"
             @click="clickSelect($event)"
-            @blur="blurSelect($event)"
             :class="optList.length ? '' : 'disabled'">
         <div class="selected">{{ selectedV ? selectedV : '--' }}</div>
         <div class="select__options none">
@@ -126,6 +139,8 @@ const clickOption = (v: AreaViewModel) => {
                     {{ item.area_name }}
             </div>
         </div>
+        <div class="bg none" @click="clickBP($event)"></div>
+        
         <select v-model="selectedArea">
             <option :value="undefined" disabled>Select car:</option>
             <option v-for="(item, i) in optList" :key="i"
@@ -174,7 +189,7 @@ const clickOption = (v: AreaViewModel) => {
         margin-right: 1em;
     }
     
-    @include pad {
+    @include mobile {
         &:first-child {
             margin-right: 0;
         }
@@ -223,7 +238,7 @@ const clickOption = (v: AreaViewModel) => {
         padding: .2em .5em;
     }
 
-    > .select__options.none {
+    > .none {
         display: none;
     }
     > .select__options {
@@ -235,7 +250,7 @@ const clickOption = (v: AreaViewModel) => {
         width: 100%;
         overflow-y: scroll;
         z-index: 10;
-        /* height: 65vh; */
+        height: calc(100vh - 300px);
 
         .options__option {
             @include select-T;
@@ -245,6 +260,15 @@ const clickOption = (v: AreaViewModel) => {
                 background-color: $white-normal-hover;
             }
         }
+    }
+    > .bg {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #fff;
+        opacity: 0;
     }
 }
 

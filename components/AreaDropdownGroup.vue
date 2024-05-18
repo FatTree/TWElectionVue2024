@@ -151,7 +151,7 @@ onBeforeMount( async() => {
 
 .area {
     display: flex;
-    gap: 12px;
+    gap: 1em;
 
     &__block {
         display: flex;

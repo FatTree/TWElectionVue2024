@@ -14,7 +14,7 @@ const year = ref(d.getFullYear());
 </script>
 <template>
     <div class="layout">
-        <div class="layout__nav">
+        <div class="layout__nav" style="z-index: 10;">
             <h3 class="layout__nav__title">{{ year }} 開票地圖</h3>
         </div>
         <div class="layout__content">

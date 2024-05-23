@@ -187,7 +187,7 @@ export const getTicketData = async(id: string, type: string, code: string, model
 
         let resultObj: TicketModel[] = res[code];
 
-        if (type === AREA.NATION) {return resultObj;}
+        if (type === AREA.NATION) return resultObj;
 
         if (type === AREA.VLI && liCode) {
             resultObj = res[liCode];

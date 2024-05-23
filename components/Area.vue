@@ -250,7 +250,7 @@ const clickBP = (ev: Event) => {
         width: 100%;
         overflow-y: scroll;
         z-index: 10;
-        height: calc(100vh - 300px);
+        max-height: calc(100vh - 300px);
 
         .options__option {
             @include select-T;

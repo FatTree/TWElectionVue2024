@@ -17,8 +17,6 @@ export const useOverallStore = defineStore( storeName, () => {
     } = profileStore;
 
     const {
-        cityOption,
-        districtOption,
         liOption,
         selectedCity,
         selectedDist,
@@ -38,31 +36,27 @@ export const useOverallStore = defineStore( storeName, () => {
     const OACCode = ref('');
     const OADCode = ref('');
 
-    const setDefaultOverall = async (id: string, type: string, code: string, list: TicketViewModel[], DList: TicketViewModel[], selectedCityVal?: AreaSelectedViewModel | null) => {
-        // districtOption.value = undefined;
+    const setDefaultOverall = async (
+        id: string, 
+        type: string, 
+        code: string, 
+        CCode: string,
+        list: TicketViewModel[], 
+        DList: TicketViewModel[], 
+        selectedCityVal?: AreaSelectedViewModel | null, 
+    ) => {
         liOption.value = undefined;
         selectedCity.value = selectedCityVal;
         selectedDist.value = null;
         selectedLi.value = null;
+        OACCode.value = CCode;
         OADCode.value = '';
-        OACCode.value = '';
         OAType.value = type;
         OACode.value = code;
         OAList.value = list;
         ticketDistViewList.value = DList;
         ticketLiViewList.value = [];
         await getProfileList(id, type, code);
-
-        // selectedCity.value = CModel;
-        // OAAreaVM.value = CModel;============
-        // OAType.value = 'C';
-        // OACCode.value = CModel.areaCode;
-        // OACode.value = props.code; 
-        // liOption.value = [];
-        // ticketDistViewList.value = [];
-        // ticketLiViewList.value = [];
-        // selectedDist.value = null;
-        // selectedLi.value = null;
     }
     
     return {

@@ -20,29 +20,17 @@ const mapResultList: Ref<MapViewModel[]> = ref([]);
 
 const areaStore = useAreaStore();
 const ticketStore = useTicketStore();
-const profilrStore = useProfileStore();
 const overallStore = useOverallStore();
 
 const { getAreaList } = areaStore;
-const {
-    cityOption,
-    liOption,
-    selectedCity,
-    selectedDist,
-    selectedLi,
-} = storeToRefs(areaStore);
+const { cityOption } = storeToRefs(areaStore);
 
 const { getTicketList } = ticketStore;
 const { 
     ticketCityViewList,
     ticketDistViewList,
-    ticketLiViewList,
-    sortedCityTicketList,
     ticketMapList,
 } = storeToRefs(ticketStore);
-
-
-// const { getProfileList } = profilrStore;
 
 const { setDefaultOverall } = overallStore;
 const {
@@ -50,7 +38,6 @@ const {
     OACode,
     OAAreaVM,
     OACCode,
-    OADCode,
     OAList,
 } = storeToRefs(overallStore);
 
@@ -252,8 +239,10 @@ const clickMap = async (p: Array<string>) => {
                 await getTicketList(props.id, OAType.value, "00_000_00_000_0000", _areaVM);
                 await getTicketList(props.id, "D", _areaVM.areaCode); 
                 OAList.value = ticketCityViewList.value.sort(sortTicketFun);
+                OACCode.value = _areaVM.areaCode;
+                
                 await getAreaList(props.id, "D", _areaVM.areaCode); 
-                await setDefaultOverall(props.id, OAType.value, OACode.value, OAList.value, ticketDistViewList.value, _areaVM);
+                await setDefaultOverall(props.id, OAType.value, OACode.value, OACCode.value, OAList.value, ticketDistViewList.value, _areaVM);
             }
         }
     });

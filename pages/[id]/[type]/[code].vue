@@ -30,6 +30,7 @@ const {
     OAType,
     OACode,
     OAList,
+    OACCode,
 } = storeToRefs(overallStore);
 const {
     setDefaultOverall,
@@ -49,7 +50,7 @@ const collapseOverall = () => {
     icon.classList.toggle("collapse");
 }
 
-await setDefaultOverall(id, OAType.value, OACode.value, OAList.value, null)
+await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.value, [])
 
 </script>
 <template>
@@ -78,7 +79,6 @@ await setDefaultOverall(id, OAType.value, OACode.value, OAList.value, null)
             <Map :id="id" type="C" />
         </div>
         <div class="detail">
-            <!-- <h2>Tickets</h2> -->
             <TicketGroup :id="id" :type="type" :code="code" />
         </div>
     </div>
@@ -165,7 +165,6 @@ await setDefaultOverall(id, OAType.value, OACode.value, OAList.value, null)
         }
 
         > .overall__content {
-            /* margin-top: 20px; */
             height: 100%;
             opacity: 1;
             transition: all .2s ease-in;
@@ -217,11 +216,6 @@ await setDefaultOverall(id, OAType.value, OACode.value, OAList.value, null)
             width: 60vw;
             margin-bottom: 40px;
         }
-    }
-
-    > .detail {
-        /* overflow: hidden; */
-        /* height: 219px; */
     }
 }
 </style>

@@ -34,12 +34,7 @@ const {
     getAreaList,
 } = areaStore;
 
-// const {
-//     getProfileList,
-// } = profileStore;
-
 const {
-    ticketNationViewList,
     ticketDistViewList,
     ticketLiViewList,
 } = storeToRefs(ticketStore);
@@ -92,18 +87,7 @@ const handleLCode = (LModel: AreaSelectedViewModel) => {
 const clearSelectedArea = async () => {
     OAType.value = 'N';
     districtOption.value = undefined;
-    await setDefaultOverall(props.id, OAType.value, props.code, OAList.value, []);
-    // districtOption.value = undefined;
-    // liOption.value = undefined;
-    // selectedCity.value = undefined;
-    // selectedDist.value = undefined;
-    // selectedLi.value = undefined;
-    // OADCode.value = '';
-    // OACCode.value = '';
-    // OAType.value = 'N';
-    // OACode.value = props.code;
-    // OAList.value = ticketNationViewList.value;
-    // await getProfileList(props.id, props.type, props.code);
+    await setDefaultOverall(props.id, OAType.value, props.code, OACCode.value, OAList.value, []);
 }
 
 watch(OACCode, async(v) => {
@@ -118,8 +102,6 @@ watch(OADCode, async(v) => {
 
 onBeforeMount( async() => {
     await getAreaList(props.id, 'C', props.code);
-    // await getAreaList(props.id, 'D', OACCode.value);
-    // await getAreaList(props.id, 'L', OACCode.value, OADCode.value);
 });
 
 </script>
@@ -202,5 +184,4 @@ onBeforeMount( async() => {
         }
     }
 }
-
 </style>

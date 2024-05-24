@@ -94,7 +94,7 @@ onMounted(()=> {
 <template>
 <ClientOnly>
     <Transition name="fade" mode="out-in">
-        <div v-if="!list.length" class="ticketBox" :style="{backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}">
+        <div v-if="!list.length && !isOverall" class="ticketBox" :style="{backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}">
             <div class="TTitle TContent"></div>
             <div class="TContent"></div>
             <div class="TContent"></div>
@@ -159,7 +159,7 @@ onMounted(()=> {
 
 .fade-enter,
 .fade-leave-to {
-    /* opacity: 0 */
+    opacity: 0
 }
 
 .ticketBox {

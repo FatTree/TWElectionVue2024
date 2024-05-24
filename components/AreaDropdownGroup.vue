@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { AreaSelectedViewModel, AreaViewModel } from "~/viewModels/DataViewModel";
-import { useProfileStore } from '~/stores/useProfileStore';
+import { useOverallStore } from '~/stores/useOverallStore';
 
 type Props = {
     id: string;
@@ -19,7 +19,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const areaStore = useAreaStore();
 const ticketStore = useTicketStore();
-const profileStore = useProfileStore();
 const overallStore = useOverallStore();
 const {
     cityOption,
@@ -36,14 +35,13 @@ const {
 } = areaStore;
 
 const {
-    getProfileList,
-} = profileStore;
-
-const {
-    ticketNationViewList,
     ticketDistViewList,
     ticketLiViewList,
 } = storeToRefs(ticketStore);
+
+const { 
+    setDefaultOverall,
+} = overallStore;
 
 const {
     OAAreaVM,
@@ -54,6 +52,7 @@ const {
     OACCode,
     OADCode,
 } = storeToRefs(overallStore);
+
 
 const handleCCode = (CModel: AreaSelectedViewModel) => {
     selectedCity.value = CModel;
@@ -86,22 +85,9 @@ const handleLCode = (LModel: AreaSelectedViewModel) => {
 }
 
 const clearSelectedArea = async () => {
-    districtOption.value = undefined;
-    liOption.value = undefined;
-    selectedCity.value = undefined;
-    selectedDist.value = undefined;
-    selectedLi.value = undefined;
-    OADCode.value = '';
-    OACCode.value = '';
     OAType.value = 'N';
-    OACode.value = props.code;
-    OAList.value = ticketNationViewList.value;
-    await getProfileList(props.id, props.type, props.code);
-}
-
-const clearArea = (selectedArea: Ref<AreaSelectedViewModel|undefined>, code: Ref<string>) => {
-    selectedArea.value = undefined;
-    code.value = '';
+    districtOption.value = undefined;
+    await setDefaultOverall(props.id, OAType.value, props.code, OACCode.value, OAList.value, []);
 }
 
 watch(OACCode, async(v) => {
@@ -116,8 +102,6 @@ watch(OADCode, async(v) => {
 
 onBeforeMount( async() => {
     await getAreaList(props.id, 'C', props.code);
-    // await getAreaList(props.id, 'D', OACCode.value);
-    // await getAreaList(props.id, 'L', OACCode.value, OADCode.value);
 });
 
 </script>
@@ -200,5 +184,4 @@ onBeforeMount( async() => {
         }
     }
 }
-
 </style>

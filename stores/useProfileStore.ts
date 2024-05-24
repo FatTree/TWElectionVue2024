@@ -8,7 +8,7 @@ import { getProfileData } from '~/services/DataService';
 const storeName = 'profile';
 
 export const useProfileStore = defineStore( storeName, () => {
-    const profile = ref<ProfileModel>();
+    const profile = ref<ProfileModel | ProfileModel[] | null>();
     const profileView = ref<ProfileViewModel | null>();
     const vote_ticket = ref<number>(0);
     const invalid_ticket = ref<number>(0);
@@ -16,20 +16,22 @@ export const useProfileStore = defineStore( storeName, () => {
     const vote_to_elect = ref<number>(0);
 
     const getProfileList = async(id: string, type: string, code: string, VModel?: AreaSelectedViewModel,liCode?: string) => {
-        let _list: ProfileModel;
+        let _list: ProfileModel | null;
         if (type.trim() === 'L') {
             _list = await getProfileData(id, type, code, VModel, liCode);
         } else {
             _list = await getProfileData(id, type, code, VModel);
         }
         profile.value = _list;
+        
+        if (profile.value !== null) {
+            vote_ticket.value = profile.value.vote_ticket;
+            invalid_ticket.value = profile.value.invalid_ticket;
+            valid_ticket.value = profile.value.valid_ticket;
+            vote_to_elect.value = profile.value.vote_to_elect;
+            profileView.value = profileFormatter(profile.value);
+        }
 
-        vote_ticket.value = profile.value!.vote_ticket;
-        invalid_ticket.value = profile.value!.invalid_ticket;
-        valid_ticket.value = profile.value!.valid_ticket;
-        vote_to_elect.value = profile.value!.vote_to_elect;
-
-        profileView.value = profileFormatter(profile.value!);
     }
 
     const formatted_invalid_ticket = computed( () => {

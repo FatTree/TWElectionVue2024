@@ -25,7 +25,6 @@ const props = withDefaults(defineProps<Props>(), {
 const areaStore = useAreaStore();
 const { 
     selectedLi,
-    selectedCity,
 } = storeToRefs(areaStore);
 
 const ticketStore = useTicketStore();
@@ -42,11 +41,7 @@ const {
 
 const overallStore = useOverallStore();
 const {
-    OAType,
-    OACode,
-    OALiCode,
     OAList,
-    OAAreaVM,
 } = storeToRefs(overallStore);
 
 const selectedArea: Ref<AreaSelectedViewModel | undefined> = ref();
@@ -124,9 +119,6 @@ const clickBP = (ev: Event) => {
 
 </script>
 <template>
-    <!-- @blur="blurSelect($event)" -->
-            <!-- tabindex="0" -->
-    
     <div class="select" 
             @click="clickSelect($event)"
             :class="optList.length ? '' : 'disabled'">
@@ -140,7 +132,6 @@ const clickBP = (ev: Event) => {
             </div>
         </div>
         <div class="bg none" @click="clickBP($event)"></div>
-        
         <select v-model="selectedArea">
             <option :value="undefined" disabled>Select car:</option>
             <option v-for="(item, i) in optList" :key="i"
@@ -183,7 +174,6 @@ const clickBP = (ev: Event) => {
     height: 35px;
     min-width: 9em;
     position: relative;
-    /* margin-right: .6em; */
 
     &:not(:last-child) {
         margin-right: 1em;
@@ -250,7 +240,7 @@ const clickBP = (ev: Event) => {
         width: 100%;
         overflow-y: scroll;
         z-index: 10;
-        height: calc(100vh - 300px);
+        max-height: calc(100vh - 300px);
 
         .options__option {
             @include select-T;

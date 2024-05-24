@@ -2,6 +2,7 @@
 import { useRoute } from '#vue-router';
 import { storeToRefs } from 'pinia';
 import { useTicketStore } from '~/stores/useTicketStore';
+import { useOverallStore } from '~/stores/useOverallStore';
 
 const route = useRoute();
 const id = route.params.id as string;
@@ -29,7 +30,11 @@ const {
     OAType,
     OACode,
     OAList,
+    OACCode,
 } = storeToRefs(overallStore);
+const {
+    setDefaultOverall,
+} = overallStore;
 
 if (type === 'N') {
     await getTicketList(id, type, code);
@@ -44,6 +49,8 @@ const collapseOverall = () => {
     target.classList.toggle("collapse");
     icon.classList.toggle("collapse");
 }
+
+await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.value, [])
 
 </script>
 <template>
@@ -72,7 +79,6 @@ const collapseOverall = () => {
             <Map :id="id" type="C" />
         </div>
         <div class="detail">
-            <!-- <h2>Tickets</h2> -->
             <TicketGroup :id="id" :type="type" :code="code" />
         </div>
     </div>
@@ -113,8 +119,8 @@ const collapseOverall = () => {
 
     > .overall {
         background-color: #fff;
-        width: 270px;
-        min-width: 270px;
+        width: 260px;
+        min-width: 260px;
         height: 100%;
         padding: 20px;
         border-radius: 8px;
@@ -159,12 +165,12 @@ const collapseOverall = () => {
         }
 
         > .overall__content {
-            /* margin-top: 20px; */
             height: 100%;
             opacity: 1;
             transition: all .2s ease-in;
 
             > .overall__content__title {
+                height: 1.5em;
                 margin-bottom: 15px;
             }
         }
@@ -174,7 +180,7 @@ const collapseOverall = () => {
             @include pad {
                 margin-top: 0;
                 opacity: 0;
-                /* display: none; */
+                display: none;
                 height: 0;
             }
         }
@@ -204,16 +210,12 @@ const collapseOverall = () => {
 
     > .map {
         width: 30vw;
+        margin: 40px auto 0;
 
         @include pad {
             width: 60vw;
-            margin: 40px auto;
+            margin-bottom: 40px;
         }
-    }
-
-    > .detail {
-        /* overflow: hidden; */
-        height: 219px;
     }
 }
 </style>

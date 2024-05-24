@@ -35,8 +35,8 @@ const pieContent = ref('generatePie');
 const pieBG = computed(() => (`conic-gradient(${pieContent.value})`));
 const sortedTicketList = computed( () => props.list.sort(sortTicketFun));
 const outBoxCss = reactive({
-    bgc: 'red',
-    bdrc: "green"
+    bgc: '#CCCCCC',
+    bdrc: "#E6E6E6"
 });
 
 const generatePie = (list: TicketViewModel[]) => {
@@ -64,7 +64,7 @@ const generatePie = (list: TicketViewModel[]) => {
                     outBoxCss.bgc = '#faf1ea';
                     break;
                 default:
-                    outBoxCss.bgc = '#BFBFBF'
+                    outBoxCss.bgc = '#E6E6E6'
                     break;
             }
             
@@ -88,36 +88,43 @@ onMounted(()=> {
         viewModel.value = props.areaVM;
     }
     pieContent.value = generatePie(sortedTicketList.value);
-    // outBoxCss.bdrc = sortedTicketList.value[0].party_color;
 });
 
 </script>
 <template>
-    <div class="ticketBox" :class="[isOverall ? 'ticketBox--overall' : '']" :style="[isOverall ? {backgroundColor: 'none'} : {backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}]">
-        <h6 class="ticketTitle" v-if="liVM">{{ liVM?.areaName }}</h6>
-        <h6 class="ticketTitle" v-else-if="areaVM">{{ areaVM.areaName }}</h6>
-        <!-- <h3 v-if="liVM">{{ liVM?.areaCode }} - {{ liVM?.areaName }}</h3>
-        <h3 v-else-if="areaVM">{{ areaVM.areaCode }} - {{ areaVM.areaName }}</h3> -->
-        <div v-if="isOverall" class="pie" :style="{background: pieBG}">
-            <div class="pie__center"></div>
+<ClientOnly>
+    <Transition name="fade" mode="out-in">
+        <div v-if="!list.length && !isOverall" class="ticketBox" :style="{backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}">
+            <div class="TTitle TContent"></div>
+            <div class="TContent"></div>
+            <div class="TContent"></div>
+            <div class="TContent"></div>
         </div>
-        <div class="ticketGroup" :class="[isOverall ? 'ticketGroup--overall' : '']">
-            <div class="ticket"  :class="[isOverall ? 'ticket--overall' : '']"
-                v-for="(item, i) in sortedTicketList" :key="i">
-                <div class="ticket__number">
-                    <p :style="{ backgroundColor: item.party_color }">{{ item.cand_no }}</p>
-                </div>
-                <div class="ticket__name" :style="{ borderRightColor: item.party_color }">
-                    <h6 class="ticket__name__party" :class="[isOverall ? 'ticket__name__party--overall' : '']">{{ item.party_name }}</h6>
-                    <p class="ticket__name__cand" :class="[isOverall ? 'ticket__name__cand--overall' : '']">{{ item.cand_name }} | {{ item.vice }}</p>
-                </div>
-                <div class="ticket__result">
-                    <p class="ticket__result__percent" :class="[isOverall ? 'ticket__result__percent--overall' : '']">{{ item.formatted_ticket_percent }} %</p>
-                    <p class="ticket__result__ticket" :class="[isOverall ? 'ticket__result__ticket--overall' : '']">{{ item.formatted_ticket_num }}</p>
+        <div v-else class="ticketBox" :class="[isOverall ? 'ticketBox--overall' : '']" :style="[isOverall ? {backgroundColor: 'none'} : {backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}]">
+            <h6 class="ticketTitle" v-if="liVM">{{ liVM?.areaName }}</h6>
+            <h6 class="ticketTitle" v-else-if="areaVM">{{ areaVM.areaName }}</h6>
+            <div v-if="isOverall" class="pie" :style="{background: pieBG}">
+                <div class="pie__center"></div>
+            </div>
+            <div class="ticketGroup" :class="[isOverall ? 'ticketGroup--overall' : '']">
+                <div class="ticket"  :class="[isOverall ? 'ticket--overall' : '']"
+                    v-for="(item, i) in sortedTicketList" :key="i">
+                    <div class="ticket__number">
+                        <p :style="{ backgroundColor: item.party_color }">{{ item.cand_no }}</p>
+                    </div>
+                    <div class="ticket__name" :style="{ borderRightColor: item.party_color }">
+                        <h6 class="ticket__name__party" :class="[isOverall ? 'ticket__name__party--overall' : '']">{{ item.party_name }}</h6>
+                        <p class="ticket__name__cand" :class="[isOverall ? 'ticket__name__cand--overall' : '']">{{ item.cand_name }} | {{ item.vice }}</p>
+                    </div>
+                    <div class="ticket__result">
+                        <p class="ticket__result__percent" :class="[isOverall ? 'ticket__result__percent--overall' : '']">{{ item.formatted_ticket_percent }} %</p>
+                        <p class="ticket__result__ticket" :class="[isOverall ? 'ticket__result__ticket--overall' : '']">{{ item.formatted_ticket_num }}票</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </Transition>
+</ClientOnly>
 </template>
 
 <style lang="scss">
@@ -136,27 +143,50 @@ onMounted(()=> {
     }
 }
 
+@keyframes gradient {
+	0% {
+		background-position: 100%;
+	}
+	100% {
+		background-position: 0%;
+	}
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: all .5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+    opacity: 0
+}
+
 .ticketBox {
     display: grid;
     row-gap: 12px;
     padding: 12px 20px;
     border-radius: 8px;
     min-width: 250px;
+    min-height: 190px;
 
     @include pie;
-    /* @include pad {
-        display: flex;
+
+    > .TContent {
+        height: 1.5em;
+        width: 100%;
+        background: linear-gradient(45deg, $white-normal-hover, $white-normal-active, $white-normal-hover, $white-normal-active);
+        animation: gradient 1s infinite linear;
+        background-size: 300% 300%;
     }
-    @include mobile {
-        margin-top: 2em;
-        align-items: center;
-        display: flex;
-        row-gap: 20px;
-    } */
+    > .TTitle {
+        height: 2em;
+        width: 8em;
+    }
 
     &--overall {
         background-color: none;
-        padding: 2em 0 0;
+        padding: 0 0 0;
 
         @include pad {
             padding-top: 0;

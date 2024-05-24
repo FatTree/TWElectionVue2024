@@ -20,35 +20,24 @@ const mapResultList: Ref<MapViewModel[]> = ref([]);
 
 const areaStore = useAreaStore();
 const ticketStore = useTicketStore();
-const profilrStore = useProfileStore();
 const overallStore = useOverallStore();
 
-const {
-    cityOption,
-    liOption,
-    selectedCity,
-    selectedDist,
-    selectedLi,
-} = storeToRefs(areaStore);
+const { getAreaList } = areaStore;
+const { cityOption } = storeToRefs(areaStore);
 
 const { getTicketList } = ticketStore;
 const { 
     ticketCityViewList,
     ticketDistViewList,
-    ticketLiViewList,
-    sortedCityTicketList,
     ticketMapList,
 } = storeToRefs(ticketStore);
 
-
-const { getProfileList } = profilrStore;
-
+const { setDefaultOverall } = overallStore;
 const {
     OAType,
     OACode,
     OAAreaVM,
     OACCode,
-    OADCode,
     OAList,
 } = storeToRefs(overallStore);
 
@@ -241,31 +230,19 @@ const cityPath = [
 const clickMap = async (p: Array<string>) => {
     cityOption.value!.filter(async (city) => {
         const _areaVM: AreaSelectedViewModel = { ...city, areaName: city.area_name };
+        
         for( let x=0; x<p.length; x++) {
             if (city.area_name === p[x]) {
-                selectedCity.value = _areaVM;
                 OAAreaVM.value = _areaVM;
                 OAType.value = AREA.CITY;
-                OACCode.value = _areaVM.areaCode;
                 OACode.value = "00_000_00_000_0000";
-                liOption.value = [];
-                ticketDistViewList.value = [];
-                ticketLiViewList.value = [];
-                selectedDist.value = null;
-                selectedLi.value = null;
-                
-                // selectedCity.value = _areaVM;
-                // selectedDist.value = null;
-                // selectedLi.value = null;
-                // OAAreaVM.value = _areaVM;
-                // OAType.value = AREA.CITY;
-                // OACode.value = "00_000_00_000_0000";
-                // OACCode.value = '';
-                OADCode.value = '';
                 await getTicketList(props.id, OAType.value, "00_000_00_000_0000", _areaVM);
+                await getTicketList(props.id, "D", _areaVM.areaCode); 
                 OAList.value = ticketCityViewList.value.sort(sortTicketFun);
-
+                OACCode.value = _areaVM.areaCode;
                 
+                await getAreaList(props.id, "D", _areaVM.areaCode); 
+                await setDefaultOverall(props.id, OAType.value, OACode.value, OACCode.value, OAList.value, ticketDistViewList.value, _areaVM);
             }
         }
     });
@@ -293,6 +270,7 @@ onMounted(() => {
                             fill = COLOR.NP;
                             break;
                         default:
+                            fill = COLOR.OTHER;
                             break;
                     }
                     const com = {..._city, party_name: ticket.party_name, fill}

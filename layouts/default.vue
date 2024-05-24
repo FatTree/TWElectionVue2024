@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
-import { useElectionStore } from '~/stores/useElectionStore'
+import { useElectionStore } from '~/stores/useElectionStore';
 
 
 const store = useElectionStore();
@@ -21,7 +21,7 @@ const year = ref(d.getFullYear());
             <div class="tabContainer">
                 <div class="tabContainer__wrapper">
                     <NuxtLink class="tabContainer__wrapper__item" 
-                        v-for=" (item, index) in electionList" 
+                        v-for=" (item, index) in electionList"
                         :key="index" 
                         :to="{
                             name: 'id-type-code',

@@ -146,7 +146,6 @@ export const getProfileData = async(id: string, type: string, code: string, VMod
 export const getTicketWinnerSummary = async(id: string, type: string, code: string): Promise<TicketModel[]> => {
     try {
         const res: TicketGroupModel = await $fetch(`${TICKET_URL}/${id}/${type}/${code}.json`);
-        // return res[code].filter(e => (e.is_victor.trim() === '*'));
         const resCode: Array<TicketModel> = res[code];
         
         const groupByCity = resCode.reduce( (_ticketObg: {[key: string]: TicketModel[]}, _ticket: TicketModel) => {
@@ -160,7 +159,7 @@ export const getTicketWinnerSummary = async(id: string, type: string, code: stri
 
         let result: TicketModel[] = [];
         Object.values(groupByCity).forEach( val => {
-            let max: TicketModel = null;
+            let max: TicketModel | null = null;
             val.forEach( (i: TicketModel) => {
                 if ( max === null) {
                     max = i;
@@ -168,7 +167,7 @@ export const getTicketWinnerSummary = async(id: string, type: string, code: stri
                     max = (max.ticket_num < i.ticket_num ) ? i : max;
                 }
             });
-            result.push(max);
+            if (max !== null) result.push(max);
         });
         return result;
     } catch (error) {
@@ -182,12 +181,11 @@ export const getTicketData = async(id: string, type: string, code: string, model
     try {
         const res: TicketGroupModel = await $fetch(`${TICKET_URL}/${id}/${type}/${code}.json`);
         console.log(`${TICKET_URL}/${id}/${type}/${code}.json`);
-        console.log('type', type);
-        console.log(`code`, code);
+        console.log('type: '+ type +` ,code: `+ code);
 
         let resultObj: TicketModel[] = res[code];
 
-        if (type === AREA.NATION) {return resultObj;}
+        if (type === AREA.NATION) return resultObj;
 
         if (type === AREA.VLI && liCode) {
             resultObj = res[liCode];

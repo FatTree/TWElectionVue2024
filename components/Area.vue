@@ -194,7 +194,7 @@ const clickBP = (ev: Event) => {
         content: '';
         width: 24px;
         height: 24px;
-        background-image: url(/_nuxt/assets/png/right-arrow.png);
+        background-image: url(@/assets/png/chevron-right-solid.svg);
         background-repeat: no-repeat;
         background-position: center;
         background-size: 16px;

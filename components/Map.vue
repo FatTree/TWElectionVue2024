@@ -247,6 +247,7 @@ const clickMap = async (p: Array<string>) => {
         }
     });
 }
+
 onMounted(() => {
     const generateMapResultList = (): MapViewModel[] =>  {
         const result: Array<MapViewModel> = [];

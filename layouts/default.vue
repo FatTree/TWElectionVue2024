@@ -8,14 +8,11 @@ const { electionList } = storeToRefs(store);
 const { getElectionList } = store;
 await getElectionList();
 
-const d = new Date();
-const year = ref(d.getFullYear());
-
 </script>
 <template>
     <div class="layout">
         <div class="layout__nav" style="z-index: 10;">
-            <h3 class="layout__nav__title">{{ year }} 開票地圖</h3>
+            <h3 class="layout__nav__title">台灣歷年正副總統選舉開票地圖</h3>
         </div>
         <div class="layout__content">
             <div class="tabContainer">

@@ -24,6 +24,7 @@ const {
     selectedCity,
     selectedDist,
     selectedLi,
+    districtOption,
 } = storeToRefs(areaStore);
 
 const {
@@ -50,7 +51,11 @@ const collapseOverall = () => {
     icon.classList.toggle("collapse");
 }
 
-await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.value, [])
+onMounted(async () => {
+    districtOption.value = undefined;
+    await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.value, [])
+
+})
 
 </script>
 <template>
@@ -135,10 +140,10 @@ await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.va
             text-wrap: nowrap;
             display: flex;
             justify-content: space-between;
+            cursor: pointer;
     
             @include pad {
                 width: 100%;
-                cursor: pointer;
                 margin-bottom: 0px;
             }
     
@@ -147,7 +152,7 @@ await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.va
                 cursor: pointer;
                 width: 24px;
                 height: 24px;
-                background-image: url('@/assets/png/right-arrow.png');
+                background-image: url('@/assets/png/chevron-right-solid.svg');
                 background-repeat: no-repeat;
                 background-position: center;
                 background-size: 16px;
@@ -167,7 +172,7 @@ await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.va
         > .overall__content {
             height: 100%;
             opacity: 1;
-            transition: all .2s ease-in;
+            transition: all .3s ease-in;
 
             > .overall__content__title {
                 height: 1.5em;
@@ -176,11 +181,10 @@ await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.va
         }
 
         > .collapse {
-            display: block;
+            display: none;
             @include pad {
                 margin-top: 0;
                 opacity: 0;
-                display: none;
                 height: 0;
             }
         }

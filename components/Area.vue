@@ -151,21 +151,6 @@ const clickBP = (ev: Event) => {
 
 
 <style lang="scss" scoped>
-@import '../assets/_color';
-@import '../assets/_font';
-@import '../assets/_share';
-
-@mixin pad {
-    @media(max-width: 1100px) {
-        @content;
-    }
-}
-@mixin mobile {
-    @media(max-width:768px){
-        @content;
-    }
-}
-
 .select {
     border: 1px solid $white-normal-hover;
     border-radius: 8px;

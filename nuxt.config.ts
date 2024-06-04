@@ -2,12 +2,17 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
-    '@pinia/nuxt',
-    // '@nuxtjs/style-resources',
+    '@pinia/nuxt', 
+    '@nuxtjs/style-resources', 
+    "@nuxtjs/i18n"
   ],
-  // styleResources: {
-  //   scss: [
-  //     '/assets/_share.scss'
-  //   ],
-  // }
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: '@use "~/assets/_main.scss" as *;'
+        }
+      }
+    }
+  }
 })

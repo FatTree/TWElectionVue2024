@@ -94,7 +94,7 @@ onMounted(()=> {
 <template>
 <ClientOnly>
     <Transition name="fade" mode="out-in">
-        <div v-if="!list.length && !isOverall" class="ticketBox" :style="{backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}">
+        <div v-if="!list.length" class="ticketBox" :style="{backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}">
             <div class="TTitle TContent"></div>
             <div class="TContent"></div>
             <div class="TContent"></div>
@@ -128,22 +128,7 @@ onMounted(()=> {
 </template>
 
 <style lang="scss">
-@import '../assets/_color';
-@import '../assets/_font';
-@import '../assets/_share';
-
-@mixin pad {
-    @media(max-width: 1100px) {
-        @content;
-    }
-}
-@mixin mobile {
-    @media(max-width:768px){
-        @content;
-    }
-}
-
-@keyframes gradient {
+/* @keyframes gradient {
 	0% {
 		background-position: 100%;
 	}
@@ -160,7 +145,7 @@ onMounted(()=> {
 .fade-enter,
 .fade-leave-to {
     opacity: 0
-}
+} */
 
 .ticketBox {
     display: grid;

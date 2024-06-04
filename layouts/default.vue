@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia';
 import { useElectionStore } from '~/stores/useElectionStore';
 
 
@@ -12,7 +11,14 @@ await getElectionList();
 <template>
     <div class="layout">
         <div class="layout__nav" style="z-index: 10;">
-            <h3 class="layout__nav__title">台灣歷年正副總統選舉開票地圖</h3>
+            <h3 class="layout__nav__title">{{ $t('UI.name') }}</h3>
+            <form>
+                <label for="locale-select">{{ $t('language') }}: {{ $t('UI.name') }} </label>
+                <select id="locale-select" v-model="$i18n.locale">
+                    <option value="en">en</option>
+                    <option value="ch">ch</option>
+                </select>
+            </form>
         </div>
         <div class="layout__content">
             <div class="tabContainer">
@@ -37,15 +43,6 @@ await getElectionList();
 </template>
 <style lang="scss">
 @import url('@/assets/reset.css');
-@import '../assets/_color.scss';
-@import '../assets/_font.scss';
-
-@mixin mobile {
-    @media(max-width:768px){
-        @content;
-    }
-}
-
 .layout {
     background-color: $bgc;
     &__nav {

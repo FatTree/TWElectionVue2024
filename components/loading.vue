@@ -1,11 +1,9 @@
 <script setup>
-
 </script>
 <template>
     <div class="loader"></div>
 </template>
 <style lang="scss">
-@import '../assets/_color';
 .loader {
     border: 10px solid $bgc;
     border-radius: 50%;

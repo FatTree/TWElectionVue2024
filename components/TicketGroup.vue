@@ -35,9 +35,9 @@ const props = withDefaults(defineProps<Props>(), {
     <div class="hints outBox" v-if="!selectedCity && !selectedDist && !selectedDist">
         <div class="hint">
             <div class="hint__top">
-                <h3>小提示</h3>
+                <h3>{{ $t('hint.hint') }}</h3>
                 <p>
-                    點擊縣市、區、里可查看選舉結果
+                    {{ $t('hint.hint1') }}
                 </p>
             </div>
             <div class="hint__btm">
@@ -46,9 +46,9 @@ const props = withDefaults(defineProps<Props>(), {
         </div>
         <div class="hint">
             <div class="hint__top">
-                <h3>小提示</h3>
+                <h3>{{ $t('hint.hint') }}</h3>
                 <p>
-                    點擊地圖可查看縣市的選舉結果
+                    {{ $t('hint.hint2') }}
                 </p>
             </div>
             <div class="hint__btm">
@@ -66,19 +66,6 @@ const props = withDefaults(defineProps<Props>(), {
 </Transition>
 </template>
 <style lang="scss">
-@mixin pad {
-    @media(max-width: 1100px) {
-        @content;
-    }
-}
-@mixin mobile {
-    @media(max-width:768px){
-        width: 100%;
-        @content;
-    }
-}
-
-
 .fade-enter-active,
 .fade-leave-active {
     transition: all .3s ease;
@@ -103,7 +90,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 .hints {
     .hint {
-        min-width: 255px;
+        width: 240px;
         background-color: #DEE0E4;
         border-radius: 8px;
         padding: 20px;

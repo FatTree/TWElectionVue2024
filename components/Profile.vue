@@ -67,36 +67,19 @@ onMounted( async() => {
             </div>
             <div class="profile__top__rate">
                 <p class="number">{{ formatted_vote_to_elect }}%</p>
-                <p class="word">投票率</p>
+                <p class="word">{{ $t('overall.voteRate')  }}</p>
             </div>
         </div>
         <div class="profile__buttom">
-            <p>投票數: <label>{{ formatted_vote_ticket }} 票</label></p>
-            <p>有效票數: <label>{{ formatted_valid_ticket }} 票</label></p>
-            <p>無效票數: <label>{{ formatted_invalid_ticket }} 票</label></p>
+            <p>{{ $t('overall.voteRate') }}: <label>{{ formatted_vote_ticket }} 票</label></p>
+            <p>{{ $t('overall.validNum') }}: <label>{{ formatted_valid_ticket }} 票</label></p>
+            <p>{{ $t('overall.inValidNum') }}: <label>{{ formatted_invalid_ticket }} 票</label></p>
         </div>
     </div>
 </template>
 
 
 <style lang="scss" scoped>
-@import '../assets/_color';
-@import '../assets/_font';
-@import '../assets/_share';
-/* :root {
-    --theAngle: 45deg;
-} */
-@mixin pad {
-    @media(max-width: 1100px) {
-        @content;
-    }
-}
-
-@mixin mobile {
-    @media(max-width:768px){
-        @content;
-    }
-}
 .profile {
     display: grid;
     row-gap: 20px;

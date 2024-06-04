@@ -50,58 +50,67 @@ const collapseOverall = () => {
     target.classList.toggle("collapse");
     icon.classList.toggle("collapse");
 }
+const isLoading = ref(true);
 
 onMounted(async () => {
     districtOption.value = undefined;
-    await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.value, [])
+    try {
+        await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.value, [])
+    } catch (error) {
+        console.log(error);
+    } finally {
+        isLoading.value = false;
+    }
 
 })
 
 </script>
 <template>
-    <div class="options">
-        <AreaDropdownGroup :id="id" :type="type" :code="code" />
-    </div>
-    <div class="content">
-        <div class="overall">
-            <h1 class="overall__title" @click="collapseOverall">投票概況 
-                <label class="overall__title__icon"></label>
-            </h1>
-            <div class="overall__content">
-                <div v-if="OAType === 'N'" class="overall__content__title">
-                    <label>全國</label>
-                </div>
-                <div v-else class="overall__content__title" >
-                    <label v-if="selectedCity">{{ selectedCity.areaName }}</label><label v-if="selectedDist"> - {{ selectedDist.areaName}} </label> <label v-if="selectedLi"> - {{ selectedLi.areaName }}</label>
-                </div>
-                <div class="overall__content__detail">
-                    <Profile class="detail" :id="id" :type="OAType" :code="OACode" />
-                    <Tickets class="detail" :id="id" :type="OAType" :code="OACode" :list="OAList" :isOverall="true" />
+    <NuxtErrorBoundary>
+        <div class="options">
+            <AreaDropdownGroup :id="id" :type="type" :code="code" />
+        </div>
+        <div class="content">
+            <div class="overall">
+                <h1 class="overall__title" @click="collapseOverall">
+                    {{ $t('overall.overall') }}
+                    <label class="overall__title__icon"></label>
+                </h1>
+                <div class="overall__content">
+                    <div v-if="OAType === 'N'" class="overall__content__title">
+                        <label>{{ $t('overall.national') }}</label>
+                    </div>
+                    <div v-else class="overall__content__title" >
+                        <label v-if="selectedCity">{{ selectedCity.areaName }}</label><label v-if="selectedDist"> - {{ selectedDist.areaName}} </label> <label v-if="selectedLi"> - {{ selectedLi.areaName }}</label>
+                    </div>
+                    <div class="overall__content__detail">
+                        <Profile class="detail" :id="id" :type="OAType" :code="OACode" />
+                        <Transition name="fade" mode="out-in">
+                            <div v-if="isLoading" class="ticketBox" >
+                                <div class="TTitle TContent"></div>
+                                <div class="TContent"></div>
+                                <div class="TContent"></div>
+                                <div class="TContent"></div>
+                            </div>
+                            <Tickets v-else class="detail" :id="id" :type="OAType" :code="OACode" :list="OAList" :isOverall="true" />
+                        </Transition>
+                    </div>
                 </div>
             </div>
+            <div class="map">
+                <Map :id="id" type="C" />
+            </div>
+            <div class="detail">
+                <TicketGroup :id="id" :type="type" :code="code" />
+            </div>
         </div>
-        <div class="map">
-            <Map :id="id" type="C" />
-        </div>
-        <div class="detail">
-            <TicketGroup :id="id" :type="type" :code="code" />
-        </div>
-    </div>
+        <template #error="{ error }">
+            <error :error="error" />
+        </template>
+    </NuxtErrorBoundary>
 </template>
 
 <style lang="scss">
-@mixin pad {
-    @media(max-width: 1100px) {
-        @content;
-    }
-}
-@mixin mobile {
-    @media(max-width:768px){
-        width: 100%;
-        @content;
-    }
-}
-
 .options {
     display: flex;
     gap: 20px;
@@ -207,6 +216,29 @@ onMounted(async () => {
 
                 @include mobile {
                     width: 100%;
+                }
+            }
+
+            .ticketBox {
+                display: grid;
+                row-gap: 12px;
+                padding: 12px 20px;
+                border-radius: 8px;
+                min-width: 250px;
+                min-height: 190px;
+
+                @include pie;
+
+                > .TContent {
+                    height: 1.5em;
+                    width: 100%;
+                    background: linear-gradient(45deg, $white-normal-hover, $white-normal-active, $white-normal-hover, $white-normal-active);
+                    animation: gradient 1s infinite linear;
+                    background-size: 300% 300%;
+                }
+                > .TTitle {
+                    height: 2em;
+                    width: 8em;
                 }
             }
         }

@@ -113,12 +113,12 @@ onMounted(()=> {
                         <p :style="{ backgroundColor: item.party_color }">{{ item.cand_no }}</p>
                     </div>
                     <div class="ticket__name" :style="{ borderRightColor: item.party_color }">
-                        <h6 class="ticket__name__party" :class="[isOverall ? 'ticket__name__party--overall' : '']">{{ item.party_name }}</h6>
+                        <h6 class="ticket__name__party" :class="[isOverall ? 'ticket__name__party--overall' : '']">{{ $t(`partyCode.${item.party_code}`) }}</h6>
                         <p class="ticket__name__cand" :class="[isOverall ? 'ticket__name__cand--overall' : '']">{{ item.cand_name }} | {{ item.vice }}</p>
                     </div>
                     <div class="ticket__result">
                         <p class="ticket__result__percent" :class="[isOverall ? 'ticket__result__percent--overall' : '']">{{ item.formatted_ticket_percent }} %</p>
-                        <p class="ticket__result__ticket" :class="[isOverall ? 'ticket__result__ticket--overall' : '']">{{ item.formatted_ticket_num }}票</p>
+                        <p class="ticket__result__ticket" :class="[isOverall ? 'ticket__result__ticket--overall' : '']">{{ item.formatted_ticket_num }} {{ $t('UI.ticket') }}</p>
                     </div>
                 </div>
             </div>

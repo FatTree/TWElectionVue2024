@@ -1,11 +1,10 @@
 {
     "language": "Language",
     "UI": {
-        "name": "Taiwan’s Presidential Election",
-        "session": "",
-        "ele": "Presidential Election",
+        "name": "Taiwan Presidential Election",
+        "session": "{session}th Presidential Election",
         "btnClear": "Clear",
-        "ticket": ""
+        "ticket": "-"
     },
     "hint": {
         "hint": "Hint",
@@ -29,7 +28,7 @@
         "1": "KMT",
         "16": "DPP",
         "90": "PFP",
-        "98": "連署",
+        "98": "Co-sign",
         "350": "TPP"
     }
 }

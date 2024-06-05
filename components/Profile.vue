@@ -71,9 +71,9 @@ onMounted( async() => {
             </div>
         </div>
         <div class="profile__buttom">
-            <p>{{ $t('overall.voteRate') }}: <label>{{ formatted_vote_ticket }} 票</label></p>
-            <p>{{ $t('overall.validNum') }}: <label>{{ formatted_valid_ticket }} 票</label></p>
-            <p>{{ $t('overall.inValidNum') }}: <label>{{ formatted_invalid_ticket }} 票</label></p>
+            <p>{{ $t('overall.voteRate') }}: <label>{{ formatted_vote_ticket }} {{ $t('UI.ticket') }}</label></p>
+            <p>{{ $t('overall.validNum') }}: <label>{{ formatted_valid_ticket }} {{ $t('UI.ticket') }}</label></p>
+            <p>{{ $t('overall.inValidNum') }}: <label>{{ formatted_invalid_ticket }} {{ $t('UI.ticket') }}</label></p>
         </div>
     </div>
 </template>

@@ -1,9 +1,8 @@
 {
     "language": "語言",
     "UI": {
-        "name": "台灣歷年正副總統選舉開票地圖",
-        "session": "第",
-        "ele": "總統副總統選舉",
+        "name": "台灣總統選舉開票地圖",
+        "session": "第{session}總統副總統選舉",
         "btnClear": "清除",
         "ticket": "票"
     },

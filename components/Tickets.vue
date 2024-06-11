@@ -98,28 +98,30 @@ onMounted(()=> {
 
 </script>
 <template>
-    <div v-show="!list.length" class="ticketBox" :class="[isOverall ? 'ticketBox--overall' : '']" :style="[ isOverall ? {backgroundColor: 'none'} : {backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}]">
-        <Loading />
-    </div>
-    <div v-show="list.length" class="ticketBox" :class="[isOverall ? 'ticketBox--overall' : '']" :style="[isOverall ? {backgroundColor: 'none'} : {backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}]">
-        <h6 class="ticketTitle" v-if="liVM">{{ liVM?.areaName }}</h6>
-        <h6 class="ticketTitle" v-else-if="areaVM">{{ areaVM.areaName }}</h6>
-        <div v-if="isOverall" class="pie" :style="{background: pieBG}">
-            <div class="pie__center"></div>
+    <div>
+        <div v-show="!list.length" class="ticketBox" :class="[isOverall ? 'ticketBox--overall' : '']" :style="[ isOverall ? {backgroundColor: 'none'} : {backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}]">
+            <Loading />
         </div>
-        <div class="ticketGroup" :class="[isOverall ? 'ticketGroup--overall' : '']">
-            <div class="ticket"  :class="[isOverall ? 'ticket--overall' : '']"
-                v-for="(item, i) in sortedTicketList" :key="i">
-                <div class="ticket__number">
-                    <p :style="{ backgroundColor: item.party_color }">{{ item.cand_no }}</p>
-                </div>
-                <div class="ticket__name" :style="{ borderRightColor: item.party_color }">
-                    <h6 class="ticket__name__party" :class="[isOverall ? 'ticket__name__party--overall' : '']">{{ $t(`partyCode.${item.party_code}`) }}</h6>
-                    <p class="ticket__name__cand" :class="[isOverall ? 'ticket__name__cand--overall' : '']">{{ item.cand_name }} | {{ item.vice }}</p>
-                </div>
-                <div class="ticket__result">
-                    <p class="ticket__result__percent" :class="[isOverall ? 'ticket__result__percent--overall' : '']">{{ item.formatted_ticket_percent }} %</p>
-                    <p class="ticket__result__ticket" :class="[isOverall ? 'ticket__result__ticket--overall' : '']">{{ item.formatted_ticket_num }} {{ $t('UI.ticket') }}</p>
+        <div v-show="list.length" class="ticketBox" :class="[isOverall ? 'ticketBox--overall' : '']" :style="[isOverall ? {backgroundColor: 'none'} : {backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}]">
+            <h6 class="ticketTitle" v-if="liVM">{{ liVM?.areaName }}</h6>
+            <h6 class="ticketTitle" v-else-if="areaVM">{{ areaVM.areaName }}</h6>
+            <div v-if="isOverall" class="pie" :style="{background: pieBG}">
+                <div class="pie__center"></div>
+            </div>
+            <div class="ticketGroup" :class="[isOverall ? 'ticketGroup--overall' : '']">
+                <div class="ticket"  :class="[isOverall ? 'ticket--overall' : '']"
+                    v-for="(item, i) in sortedTicketList" :key="i">
+                    <div class="ticket__number">
+                        <p :style="{ backgroundColor: item.party_color }">{{ item.cand_no }}</p>
+                    </div>
+                    <div class="ticket__name" :style="{ borderRightColor: item.party_color }">
+                        <h6 class="ticket__name__party" :class="[isOverall ? 'ticket__name__party--overall' : '']">{{ $t(`partyCode.${item.party_code}`) }}</h6>
+                        <p class="ticket__name__cand" :class="[isOverall ? 'ticket__name__cand--overall' : '']">{{ item.cand_name }} | {{ item.vice }}</p>
+                    </div>
+                    <div class="ticket__result">
+                        <p class="ticket__result__percent" :class="[isOverall ? 'ticket__result__percent--overall' : '']">{{ item.formatted_ticket_percent }} %</p>
+                        <p class="ticket__result__ticket" :class="[isOverall ? 'ticket__result__ticket--overall' : '']">{{ item.formatted_ticket_num }} {{ $t('UI.ticket') }}</p>
+                    </div>
                 </div>
             </div>
         </div>

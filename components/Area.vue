@@ -76,11 +76,10 @@ watch( selectedArea,  async(v) => {
     }
 });
 
-
 // custom select
 const clickSelect = (ev:Event) => {
     if (props.isLoading) return;
-
+    
     const _select = ev.currentTarget;
     const _options = _select.querySelector('div.select__options');
     const _bg = _select.querySelector('div.bg');
@@ -88,16 +87,6 @@ const clickSelect = (ev:Event) => {
     _options.classList.toggle('none');
     _select.classList.toggle('select--selected');
     _bg.classList.toggle('none');
-}
-
-const blurSelect = (ev: Event) => {
-    const _select: EventTarget = ev.currentTarget!;
-    const _options = _select.querySelector('div.select__options');
-    
-    if(!_options.classList.contains('none')) {
-        _select.classList.toggle('select--selected');
-        _options.classList.toggle('none');
-    }
 }
 
 const clickOption = (v: AreaViewModel) => {
@@ -125,8 +114,7 @@ const clickBP = (ev: Event) => {
     <div class="select" 
             @click="clickSelect($event)"
             :class="optList.length ? '' : 'disabled'">
-        <div v-show="!isLoading" class="selected">{{ selectedV ? selectedV : '--' }}</div>
-        <Loading :size="10" v-show="isLoading" />
+        <div v-show="!isLoading" class="selected">{{ selectedV ? selectedV : '--' }}</div>        
         <div class="select__options none">
             <div class="options__option" 
                 v-for="item in optList" 
@@ -135,6 +123,7 @@ const clickBP = (ev: Event) => {
                     {{ item.area_name }}
             </div>
         </div>
+        <Loading :size="10" v-show="isLoading" />
         <div class="bg none" @click="clickBP($event)"></div>
         <select v-model="selectedArea">
             <option :value="undefined" disabled>Select car:</option>

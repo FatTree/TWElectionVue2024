@@ -3,6 +3,8 @@ import { useRoute } from '#vue-router';
 import { storeToRefs } from 'pinia';
 import { useTicketStore } from '~/stores/useTicketStore';
 import { useOverallStore } from '~/stores/useOverallStore';
+import throttle from 'lodash/throttle';
+
 
 const route = useRoute();
 const id = route.params.id as string;
@@ -32,7 +34,7 @@ const {
     OACode,
     OAList,
     OACCode,
-    isOverallLoading,
+    // isOverallLoading,
 } = storeToRefs(overallStore);
 const {
     setDefaultOverall,
@@ -52,6 +54,8 @@ const collapseOverall = () => {
     icon.classList.toggle("collapse");
 }
 
+const collapseThrottle = throttle(collapseOverall, 1000);
+
 onMounted(async () => {
     districtOption.value = undefined;
     await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.value, [])
@@ -67,7 +71,7 @@ onMounted(async () => {
             <div class="overall">
                 <h1 class="overall__title">
                     {{ $t('overall.overall') }}
-                    <label class="overall__title__icon" @click="collapseOverall"></label>
+                    <label class="overall__title__icon" @click="collapseThrottle"></label>
                 </h1>
                 <div class="overall__content">
                     <div v-if="OAType === 'N'" class="overall__content__title">
@@ -79,15 +83,6 @@ onMounted(async () => {
                     <div class="overall__content__detail">
                         <Profile class="detail" :id="id" :type="OAType" :code="OACode" />
                         <Tickets class="detail" :id="id" :type="OAType" :code="OACode" :list="OAList" :isOverall="true" />
-                        <!-- <Transition name="fade" mode="out-in">
-                            <div v-if="isLoading" class="ticketBox" >
-                                <div class="TTitle TContent"></div>
-                                <div class="TContent"></div>
-                                <div class="TContent"></div>
-                                <div class="TContent"></div>
-                            </div>
-                            <Tickets v-else class="detail" :id="id" :type="OAType" :code="OACode" :list="OAList" :isOverall="true" />
-                        </Transition> -->
                     </div>
                 </div>
             </div>

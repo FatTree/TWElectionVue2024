@@ -61,23 +61,25 @@ onMounted( async() => {
 
 </script>
 <template>
-    <div v-show="isProfileLoading" class="profile">
-        <Loading />
-    </div>
-    <div v-show="!isProfileLoading" class="profile">
-        <div class="profile__top">
-            <div id="pie1" class="pie" :style="{background: pieBG}">
-                <div class="pie__center"></div>
-            </div>
-            <div class="profile__top__rate">
-                <p class="number">{{ formatted_vote_to_elect }}%</p>
-                <p class="word">{{ $t('overall.voteRate')  }}</p>
-            </div>
+    <div>
+        <div v-show="isProfileLoading" class="profile">
+            <Loading />
         </div>
-        <div class="profile__buttom">
-            <p>{{ $t('overall.voteRate') }}: <label>{{ formatted_vote_ticket }} {{ $t('UI.ticket') }}</label></p>
-            <p>{{ $t('overall.validNum') }}: <label>{{ formatted_valid_ticket }} {{ $t('UI.ticket') }}</label></p>
-            <p>{{ $t('overall.inValidNum') }}: <label>{{ formatted_invalid_ticket }} {{ $t('UI.ticket') }}</label></p>
+        <div v-show="!isProfileLoading" class="profile">
+            <div class="profile__top">
+                <div id="pie1" class="pie" :style="{background: pieBG}">
+                    <div class="pie__center"></div>
+                </div>
+                <div class="profile__top__rate">
+                    <p class="number">{{ formatted_vote_to_elect }}%</p>
+                    <p class="word">{{ $t('overall.voteRate')  }}</p>
+                </div>
+            </div>
+            <div class="profile__buttom">
+                <p>{{ $t('overall.voteRate') }}: <label>{{ formatted_vote_ticket }} {{ $t('UI.ticket') }}</label></p>
+                <p>{{ $t('overall.validNum') }}: <label>{{ formatted_valid_ticket }} {{ $t('UI.ticket') }}</label></p>
+                <p>{{ $t('overall.inValidNum') }}: <label>{{ formatted_invalid_ticket }} {{ $t('UI.ticket') }}</label></p>
+            </div>
         </div>
     </div>
 </template>

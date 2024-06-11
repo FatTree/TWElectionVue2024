@@ -2,8 +2,7 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
-    '@pinia/nuxt', 
-    '@nuxtjs/style-resources', 
+    '@pinia/nuxt',
     "@nuxtjs/i18n"
   ],
   vite: {

@@ -14,17 +14,26 @@ export const useAreaStore = defineStore(storeName, () => {
     const selectedCity = ref<AreaSelectedViewModel | null>();
     const selectedDist = ref<AreaSelectedViewModel | null>();
     const selectedLi = ref<AreaSelectedViewModel | null>();
+    const isCityLoading = ref(false);
+    const isDisLoading = ref(false);
+    const isLiLoading = ref(false);
 
     const getAreaList = async(id: string, type: string, code: string, liCode?: string) => {
         switch (type) {
             case AREA.CITY:
+                isCityLoading.value = true;
                 cityList.value = await getAreaData(id, AREA.CITY, code);
+                isCityLoading.value = false;
                 break;
             case AREA.DISC:
+                isDisLoading.value = true;
                 districtList.value = await getAreaData(id, AREA.DISC, code);
+                isDisLoading.value = false;
                 break;
             case AREA.VLI:
+                isLiLoading.value = true;
                 liList.value = await getAreaData(id, AREA.VLI, code, liCode);
+                isLiLoading.value = false;
             default:
                 break;
         }
@@ -63,6 +72,9 @@ export const useAreaStore = defineStore(storeName, () => {
         selectedCity,
         selectedDist,
         selectedLi,
+        isCityLoading,
+        isDisLoading,
+        isLiLoading,
         getAreaList,
     }
 });

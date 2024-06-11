@@ -26,9 +26,15 @@ const props = withDefaults(defineProps<Props>(), {
 const viewModel: Ref<AreaSelectedViewModel | undefined> = ref();
 
 const profileStore = useProfileStore();
+const overallStore = useOverallStore()
 
 const { 
+    isProfileLoading
 } = storeToRefs(profileStore);
+
+const {
+    OAType,
+} = storeToRefs(overallStore);
 
 
 const pieContent = ref('generatePie');
@@ -92,39 +98,32 @@ onMounted(()=> {
 
 </script>
 <template>
-<ClientOnly>
-    <Transition name="fade" mode="out-in">
-        <div v-if="!list.length" class="ticketBox" :style="{backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}">
-            <div class="TTitle TContent"></div>
-            <div class="TContent"></div>
-            <div class="TContent"></div>
-            <div class="TContent"></div>
+    <div v-show="!list.length" class="ticketBox" :class="[isOverall ? 'ticketBox--overall' : '']" :style="[ isOverall ? {backgroundColor: 'none'} : {backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}]">
+        <Loading />
+    </div>
+    <div v-show="list.length" class="ticketBox" :class="[isOverall ? 'ticketBox--overall' : '']" :style="[isOverall ? {backgroundColor: 'none'} : {backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}]">
+        <h6 class="ticketTitle" v-if="liVM">{{ liVM?.areaName }}</h6>
+        <h6 class="ticketTitle" v-else-if="areaVM">{{ areaVM.areaName }}</h6>
+        <div v-if="isOverall" class="pie" :style="{background: pieBG}">
+            <div class="pie__center"></div>
         </div>
-        <div v-else class="ticketBox" :class="[isOverall ? 'ticketBox--overall' : '']" :style="[isOverall ? {backgroundColor: 'none'} : {backgroundColor: outBoxCss.bgc, border: '2px solid ' + outBoxCss.bdrc}]">
-            <h6 class="ticketTitle" v-if="liVM">{{ liVM?.areaName }}</h6>
-            <h6 class="ticketTitle" v-else-if="areaVM">{{ areaVM.areaName }}</h6>
-            <div v-if="isOverall" class="pie" :style="{background: pieBG}">
-                <div class="pie__center"></div>
-            </div>
-            <div class="ticketGroup" :class="[isOverall ? 'ticketGroup--overall' : '']">
-                <div class="ticket"  :class="[isOverall ? 'ticket--overall' : '']"
-                    v-for="(item, i) in sortedTicketList" :key="i">
-                    <div class="ticket__number">
-                        <p :style="{ backgroundColor: item.party_color }">{{ item.cand_no }}</p>
-                    </div>
-                    <div class="ticket__name" :style="{ borderRightColor: item.party_color }">
-                        <h6 class="ticket__name__party" :class="[isOverall ? 'ticket__name__party--overall' : '']">{{ $t(`partyCode.${item.party_code}`) }}</h6>
-                        <p class="ticket__name__cand" :class="[isOverall ? 'ticket__name__cand--overall' : '']">{{ item.cand_name }} | {{ item.vice }}</p>
-                    </div>
-                    <div class="ticket__result">
-                        <p class="ticket__result__percent" :class="[isOverall ? 'ticket__result__percent--overall' : '']">{{ item.formatted_ticket_percent }} %</p>
-                        <p class="ticket__result__ticket" :class="[isOverall ? 'ticket__result__ticket--overall' : '']">{{ item.formatted_ticket_num }} {{ $t('UI.ticket') }}</p>
-                    </div>
+        <div class="ticketGroup" :class="[isOverall ? 'ticketGroup--overall' : '']">
+            <div class="ticket"  :class="[isOverall ? 'ticket--overall' : '']"
+                v-for="(item, i) in sortedTicketList" :key="i">
+                <div class="ticket__number">
+                    <p :style="{ backgroundColor: item.party_color }">{{ item.cand_no }}</p>
+                </div>
+                <div class="ticket__name" :style="{ borderRightColor: item.party_color }">
+                    <h6 class="ticket__name__party" :class="[isOverall ? 'ticket__name__party--overall' : '']">{{ $t(`partyCode.${item.party_code}`) }}</h6>
+                    <p class="ticket__name__cand" :class="[isOverall ? 'ticket__name__cand--overall' : '']">{{ item.cand_name }} | {{ item.vice }}</p>
+                </div>
+                <div class="ticket__result">
+                    <p class="ticket__result__percent" :class="[isOverall ? 'ticket__result__percent--overall' : '']">{{ item.formatted_ticket_percent }} %</p>
+                    <p class="ticket__result__ticket" :class="[isOverall ? 'ticket__result__ticket--overall' : '']">{{ item.formatted_ticket_num }} {{ $t('UI.ticket') }}</p>
                 </div>
             </div>
         </div>
-    </Transition>
-</ClientOnly>
+    </div>
 </template>
 
 <style lang="scss">
@@ -146,7 +145,6 @@ onMounted(()=> {
 .fade-leave-to {
     opacity: 0
 } */
-
 .ticketBox {
     display: grid;
     row-gap: 12px;
@@ -154,8 +152,14 @@ onMounted(()=> {
     border-radius: 8px;
     min-width: 250px;
     min-height: 190px;
-
-    @include pie;
+    &.ticketBox--overall {
+        @include pie;
+        padding: 0;
+        
+        @include mobile {
+            display: flex;
+        }
+    }
 
     > .TContent {
         height: 1.5em;
@@ -171,7 +175,8 @@ onMounted(()=> {
 
     &--overall {
         background-color: none;
-        padding: 0 0 0;
+        padding: 0 !important;
+        min-height: 190px;
 
         @include pad {
             padding-top: 0;
@@ -180,8 +185,8 @@ onMounted(()=> {
 
         @include mobile {
             margin-top: 2em;
+            margin-left: 0;
             align-items: center;
-            display: flex;
             row-gap: 20px;
         }
     }
@@ -200,7 +205,7 @@ onMounted(()=> {
 
         &--overall {
             @include mobile {
-                margin-left: 20px;
+                margin-left: 1em;
             }
         }
         
@@ -274,4 +279,5 @@ onMounted(()=> {
         }
     }
 }
+
 </style>

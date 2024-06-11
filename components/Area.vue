@@ -8,6 +8,7 @@ type Props = {
     id: string;
     type: string;
     optList: AreaViewModel[];
+    isLoading: boolean;
     selectedV?: string | undefined;
     code?: string;
     liCode?: string;
@@ -17,6 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
     id: '',
     type: '',
     code: '',
+    isLoading: true,
     selectedV: '',
     optList: () => ([]),
     liCode: '',
@@ -75,8 +77,9 @@ watch( selectedArea,  async(v) => {
 });
 
 
+// custom select
 const clickSelect = (ev:Event) => {
-    if (!props.optList.length) return;
+    if (props.isLoading) return;
 
     const _select = ev.currentTarget;
     const _options = _select.querySelector('div.select__options');
@@ -122,7 +125,8 @@ const clickBP = (ev: Event) => {
     <div class="select" 
             @click="clickSelect($event)"
             :class="optList.length ? '' : 'disabled'">
-        <div class="selected">{{ selectedV ? selectedV : '--' }}</div>
+        <div v-show="!isLoading" class="selected">{{ selectedV ? selectedV : '--' }}</div>
+        <Loading :size="10" v-show="isLoading" />
         <div class="select__options none">
             <div class="options__option" 
                 v-for="item in optList" 

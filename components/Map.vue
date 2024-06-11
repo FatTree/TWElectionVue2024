@@ -285,7 +285,7 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div v-if="mapResultList.length===0">
+    <div v-show="mapResultList.length===0">
         <Loading />
     </div>
     <svg viewBox="0 0 510 700" xmlns="http://www.w3.org/2000/svg">

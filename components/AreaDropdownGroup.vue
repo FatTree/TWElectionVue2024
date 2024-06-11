@@ -27,8 +27,10 @@ const {
     selectedCity,
     selectedDist,
     selectedLi,
+    isCityLoading,
+    isDisLoading,
+    isLiLoading,
 } = storeToRefs(areaStore);
-
 
 const { 
     getAreaList,
@@ -108,10 +110,10 @@ onBeforeMount( async() => {
 <template>
     <div class="area">
         <div class="area__block">
-            <Area :id="id" class="option__block" type="C" :code="code" :optList="cityOption" :selectedV="selectedCity?.areaName" @emit-area-code="handleCCode" />
+            <Area :id="id" class="option__block" type="C" :code="code" :optList="cityOption" :selectedV="selectedCity?.areaName" :is-loading="isCityLoading" @emit-area-code="handleCCode" />
             <div class="option__block2">
-                <Area :id="id" class="option__block__element" type="D" :code="OACCode" :optList="districtOption" :selectedV="selectedDist?.areaName" @emit-area-code="handleDCode" />
-                <Area :id="id" class="option__block__element" type="L" :code="OACCode" :liCode="OADCode" :optList="liOption" :selectedV="selectedLi?.areaName"  @emit-area-code="handleLCode" />
+                <Area :id="id" class="option__block__element" type="D" :code="OACCode" :optList="districtOption" :selectedV="selectedDist?.areaName" :is-loading="isDisLoading" @emit-area-code="handleDCode" />
+                <Area :id="id" class="option__block__element" type="L" :code="OACCode" :liCode="OADCode" :optList="liOption" :selectedV="selectedLi?.areaName" :is-loading="isLiLoading" @emit-area-code="handleLCode" />
             </div>
         </div>
         <button @click="clearSelectedArea" class="area__clear">

@@ -35,6 +35,7 @@ export const useOverallStore = defineStore( storeName, () => {
     const OAAreaVM = ref<AreaSelectedViewModel>();
     const OACCode = ref('');
     const OADCode = ref('');
+    const isOverallLoading = ref(false);
 
     const setDefaultOverall = async (
         id: string, 
@@ -45,6 +46,7 @@ export const useOverallStore = defineStore( storeName, () => {
         DList: TicketViewModel[], 
         selectedCityVal?: AreaSelectedViewModel | null, 
     ) => {
+        isOverallLoading.value = true;
         liOption.value = undefined;
         selectedCity.value = selectedCityVal;
         selectedDist.value = null;
@@ -57,6 +59,7 @@ export const useOverallStore = defineStore( storeName, () => {
         ticketDistViewList.value = DList;
         ticketLiViewList.value = [];
         await getProfileList(id, type, code);
+        isOverallLoading.value = false;
     }
     
     return {
@@ -67,6 +70,7 @@ export const useOverallStore = defineStore( storeName, () => {
         OACCode,
         OADCode,
         OALiCode,
+        isOverallLoading,
         setDefaultOverall,
     }
 });

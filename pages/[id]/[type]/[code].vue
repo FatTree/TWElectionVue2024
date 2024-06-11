@@ -32,6 +32,7 @@ const {
     OACode,
     OAList,
     OACCode,
+    isOverallLoading,
 } = storeToRefs(overallStore);
 const {
     setDefaultOverall,
@@ -54,14 +55,7 @@ const isLoading = ref(true);
 
 onMounted(async () => {
     districtOption.value = undefined;
-    try {
-        await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.value, [])
-    } catch (error) {
-        console.log(error);
-    } finally {
-        isLoading.value = false;
-    }
-
+    await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.value, [])
 })
 
 </script>
@@ -85,7 +79,8 @@ onMounted(async () => {
                     </div>
                     <div class="overall__content__detail">
                         <Profile class="detail" :id="id" :type="OAType" :code="OACode" />
-                        <Transition name="fade" mode="out-in">
+                        <Tickets class="detail" :id="id" :type="OAType" :code="OACode" :list="OAList" :isOverall="true" />
+                        <!-- <Transition name="fade" mode="out-in">
                             <div v-if="isLoading" class="ticketBox" >
                                 <div class="TTitle TContent"></div>
                                 <div class="TContent"></div>
@@ -93,7 +88,7 @@ onMounted(async () => {
                                 <div class="TContent"></div>
                             </div>
                             <Tickets v-else class="detail" :id="id" :type="OAType" :code="OACode" :list="OAList" :isOverall="true" />
-                        </Transition>
+                        </Transition> -->
                     </div>
                 </div>
             </div>
@@ -219,7 +214,7 @@ onMounted(async () => {
                 }
             }
 
-            .ticketBox {
+            /* .ticketBox {
                 display: grid;
                 row-gap: 12px;
                 padding: 12px 20px;
@@ -240,7 +235,7 @@ onMounted(async () => {
                     height: 2em;
                     width: 8em;
                 }
-            }
+            } */
         }
     }
 

@@ -27,6 +27,7 @@ const {
     formatted_vote_ticket,
     formatted_vote_to_elect,
     profileView,
+    isProfileLoading,
 } = storeToRefs(store);
 
 const {
@@ -60,7 +61,10 @@ onMounted( async() => {
 
 </script>
 <template>
-    <div class="profile">
+    <div v-show="isProfileLoading" class="profile">
+        <Loading />
+    </div>
+    <div v-show="!isProfileLoading" class="profile">
         <div class="profile__top">
             <div id="pie1" class="pie" :style="{background: pieBG}">
                 <div class="pie__center"></div>
@@ -91,7 +95,8 @@ onMounted( async() => {
 
     @include mobile {
         display: flex;
-        gap: 12px
+        gap: 12px;
+        min-height: 75px;
     }
     &__title {
         font-size: 20px;

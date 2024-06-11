@@ -51,7 +51,6 @@ const collapseOverall = () => {
     target.classList.toggle("collapse");
     icon.classList.toggle("collapse");
 }
-const isLoading = ref(true);
 
 onMounted(async () => {
     districtOption.value = undefined;
@@ -66,9 +65,9 @@ onMounted(async () => {
         </div>
         <div class="content">
             <div class="overall">
-                <h1 class="overall__title" @click="collapseOverall">
+                <h1 class="overall__title">
                     {{ $t('overall.overall') }}
-                    <label class="overall__title__icon"></label>
+                    <label class="overall__title__icon" @click="collapseOverall"></label>
                 </h1>
                 <div class="overall__content">
                     <div v-if="OAType === 'N'" class="overall__content__title">
@@ -133,9 +132,9 @@ onMounted(async () => {
         height: 100%;
         padding: 20px;
         border-radius: 8px;
+        display: block;
 
         @include pad {
-            display: block;
             width: 100%;
             max-width: calc(100% - 35px);
         }
@@ -144,7 +143,6 @@ onMounted(async () => {
             text-wrap: nowrap;
             display: flex;
             justify-content: space-between;
-            cursor: pointer;
     
             @include pad {
                 width: 100%;

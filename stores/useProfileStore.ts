@@ -14,15 +14,18 @@ export const useProfileStore = defineStore( storeName, () => {
     const invalid_ticket = ref<number>(0);
     const valid_ticket = ref<number>(0);
     const vote_to_elect = ref<number>(0);
+    const isProfileLoading = ref<boolean>(false);
 
     const getProfileList = async(id: string, type: string, code: string, VModel?: AreaSelectedViewModel,liCode?: string) => {
         let _list: ProfileModel | null;
+        isProfileLoading.value = true;
         if (type.trim() === 'L') {
             _list = await getProfileData(id, type, code, VModel, liCode);
         } else {
             _list = await getProfileData(id, type, code, VModel);
         }
         profile.value = _list;
+        isProfileLoading.value = false;
         
         if (profile.value !== null) {
             vote_ticket.value = profile.value.vote_ticket;
@@ -56,6 +59,7 @@ export const useProfileStore = defineStore( storeName, () => {
         formatted_valid_ticket,
         formatted_vote_ticket,
         formatted_vote_to_elect,
+        isProfileLoading,
         getProfileList,
     }
 });

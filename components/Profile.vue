@@ -27,6 +27,7 @@ const {
     formatted_vote_ticket,
     formatted_vote_to_elect,
     profileView,
+    isProfileLoading,
 } = storeToRefs(store);
 
 const {
@@ -60,43 +61,31 @@ onMounted( async() => {
 
 </script>
 <template>
-    <div class="profile">
-        <div class="profile__top">
-            <div id="pie1" class="pie" :style="{background: pieBG}">
-                <div class="pie__center"></div>
-            </div>
-            <div class="profile__top__rate">
-                <p class="number">{{ formatted_vote_to_elect }}%</p>
-                <p class="word">投票率</p>
-            </div>
+    <div>
+        <div v-show="isProfileLoading" class="profile">
+            <Loading />
         </div>
-        <div class="profile__buttom">
-            <p>投票數: <label>{{ formatted_vote_ticket }} 票</label></p>
-            <p>有效票數: <label>{{ formatted_valid_ticket }} 票</label></p>
-            <p>無效票數: <label>{{ formatted_invalid_ticket }} 票</label></p>
+        <div v-show="!isProfileLoading" class="profile">
+            <div class="profile__top">
+                <div id="pie1" class="pie" :style="{background: pieBG}">
+                    <div class="pie__center"></div>
+                </div>
+                <div class="profile__top__rate">
+                    <p class="number">{{ formatted_vote_to_elect }}%</p>
+                    <p class="word">{{ $t('overall.voteRate')  }}</p>
+                </div>
+            </div>
+            <div class="profile__buttom">
+                <p>{{ $t('overall.voteRate') }}: <label>{{ formatted_vote_ticket }} {{ $t('UI.ticket') }}</label></p>
+                <p>{{ $t('overall.validNum') }}: <label>{{ formatted_valid_ticket }} {{ $t('UI.ticket') }}</label></p>
+                <p>{{ $t('overall.inValidNum') }}: <label>{{ formatted_invalid_ticket }} {{ $t('UI.ticket') }}</label></p>
+            </div>
         </div>
     </div>
 </template>
 
 
 <style lang="scss" scoped>
-@import '../assets/_color';
-@import '../assets/_font';
-@import '../assets/_share';
-/* :root {
-    --theAngle: 45deg;
-} */
-@mixin pad {
-    @media(max-width: 1100px) {
-        @content;
-    }
-}
-
-@mixin mobile {
-    @media(max-width:768px){
-        @content;
-    }
-}
 .profile {
     display: grid;
     row-gap: 20px;
@@ -108,7 +97,8 @@ onMounted( async() => {
 
     @include mobile {
         display: flex;
-        gap: 12px
+        gap: 12px;
+        min-height: 75px;
     }
     &__title {
         font-size: 20px;

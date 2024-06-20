@@ -14,6 +14,7 @@ export const useTicketStore = defineStore( storeName, () => {
     const ticketDistList = ref<TicketModel[]>([]);
     const ticketLiList = ref<TicketModel[]>([]);
     const ticketMapList = ref<TicketModel[]>([]);
+    const isLoadingTicketMap = ref<boolean>(false);
 
     const ticketNationViewList = computed({
         get() { return ticketFormatter(ticketNationList.value) },
@@ -36,6 +37,7 @@ export const useTicketStore = defineStore( storeName, () => {
     });
 
     const getTicketList = async(id: string, type: string, code: string, model?: AreaSelectedViewModel, liCode?: string, liModel?: AreaSelectedViewModel) => {
+        isLoadingTicketMap.value = true;
         let _list = await getTicketData(id, type, code, model, liCode, liModel);
         switch (type) {
             case AREA.CITY:
@@ -50,8 +52,11 @@ export const useTicketStore = defineStore( storeName, () => {
             default:
                 ticketNationList.value = _list;
                 ticketMapList.value = await getTicketWinnerSummary(id, AREA.CITY, code);
+                isLoadingTicketMap.value = false;
                 break;
         }
+
+        isLoadingTicketMap.value = false;
     }
 
     const sortedCityTicketList = computed( () => ticketCityViewList.value.sort(sortTicketFun));

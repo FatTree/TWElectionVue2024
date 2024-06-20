@@ -8,6 +8,7 @@ type Props = {
     id: string;
     type: string;
     optList: AreaViewModel[];
+    isLoading: boolean;
     selectedV?: string | undefined;
     code?: string;
     liCode?: string;
@@ -17,6 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
     id: '',
     type: '',
     code: '',
+    isLoading: true,
     selectedV: '',
     optList: () => ([]),
     liCode: '',
@@ -74,10 +76,10 @@ watch( selectedArea,  async(v) => {
     }
 });
 
-
+// custom select
 const clickSelect = (ev:Event) => {
-    if (!props.optList.length) return;
-
+    if (props.isLoading) return;
+    
     const _select = ev.currentTarget;
     const _options = _select.querySelector('div.select__options');
     const _bg = _select.querySelector('div.bg');
@@ -85,16 +87,6 @@ const clickSelect = (ev:Event) => {
     _options.classList.toggle('none');
     _select.classList.toggle('select--selected');
     _bg.classList.toggle('none');
-}
-
-const blurSelect = (ev: Event) => {
-    const _select: EventTarget = ev.currentTarget!;
-    const _options = _select.querySelector('div.select__options');
-    
-    if(!_options.classList.contains('none')) {
-        _select.classList.toggle('select--selected');
-        _options.classList.toggle('none');
-    }
 }
 
 const clickOption = (v: AreaViewModel) => {
@@ -122,7 +114,7 @@ const clickBP = (ev: Event) => {
     <div class="select" 
             @click="clickSelect($event)"
             :class="optList.length ? '' : 'disabled'">
-        <div class="selected">{{ selectedV ? selectedV : '--' }}</div>
+        <div v-show="!isLoading" class="selected">{{ selectedV ? selectedV : '--' }}</div>        
         <div class="select__options none">
             <div class="options__option" 
                 v-for="item in optList" 
@@ -131,6 +123,7 @@ const clickBP = (ev: Event) => {
                     {{ item.area_name }}
             </div>
         </div>
+        <Loading :size="10" v-show="isLoading" />
         <div class="bg none" @click="clickBP($event)"></div>
         <select v-model="selectedArea">
             <option :value="undefined" disabled>Select car:</option>
@@ -151,21 +144,6 @@ const clickBP = (ev: Event) => {
 
 
 <style lang="scss" scoped>
-@import '../assets/_color';
-@import '../assets/_font';
-@import '../assets/_share';
-
-@mixin pad {
-    @media(max-width: 1100px) {
-        @content;
-    }
-}
-@mixin mobile {
-    @media(max-width:768px){
-        @content;
-    }
-}
-
 .select {
     border: 1px solid $white-normal-hover;
     border-radius: 8px;
@@ -194,7 +172,7 @@ const clickBP = (ev: Event) => {
         content: '';
         width: 24px;
         height: 24px;
-        background-image: url(/_nuxt/assets/png/right-arrow.png);
+        background-image: url(@/assets/png/chevron-right-solid.svg);
         background-repeat: no-repeat;
         background-position: center;
         background-size: 16px;

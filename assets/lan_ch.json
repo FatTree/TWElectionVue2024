@@ -1,0 +1,20 @@
+{
+    "UI": {
+        "name": "開票地圖",
+        "session": "",
+        "btnClear": "清除",
+        "ticket": "票"
+    },
+    "hint": {
+        "hint": "小提示",
+        "hint1": "點擊縣市、區、里可查看選舉結果",
+        "hint2": "點擊地圖可查看縣市的選舉結果"
+    },
+    "Overall": {
+        "national": "全國",
+        "voteRate": "投票率",
+        "VoteNum": "投票數",
+        "validNum": "有效票數",
+        "unValidNum": "無效票數"
+    }
+}

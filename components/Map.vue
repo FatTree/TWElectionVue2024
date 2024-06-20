@@ -247,6 +247,7 @@ const clickMap = async (p: Array<string>) => {
         }
     });
 }
+
 onMounted(() => {
     const generateMapResultList = (): MapViewModel[] =>  {
         const result: Array<MapViewModel> = [];
@@ -284,6 +285,9 @@ onMounted(() => {
 });
 </script>
 <template>
+    <div v-show="mapResultList.length===0">
+        <Loading />
+    </div>
     <svg viewBox="0 0 510 700" xmlns="http://www.w3.org/2000/svg">
         <g v-for="(city, index) in mapResultList" :key="index" :style="{fill: city.fill}" v-html="city.path" @click="clickMap(city.name)"></g>
     </svg>

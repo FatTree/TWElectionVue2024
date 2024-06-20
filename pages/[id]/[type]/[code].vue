@@ -3,6 +3,8 @@ import { useRoute } from '#vue-router';
 import { storeToRefs } from 'pinia';
 import { useTicketStore } from '~/stores/useTicketStore';
 import { useOverallStore } from '~/stores/useOverallStore';
+import throttle from 'lodash/throttle';
+
 
 const route = useRoute();
 const id = route.params.id as string;
@@ -24,6 +26,7 @@ const {
     selectedCity,
     selectedDist,
     selectedLi,
+    districtOption,
 } = storeToRefs(areaStore);
 
 const {
@@ -31,6 +34,7 @@ const {
     OACode,
     OAList,
     OACCode,
+    // isOverallLoading,
 } = storeToRefs(overallStore);
 const {
     setDefaultOverall,
@@ -50,53 +54,52 @@ const collapseOverall = () => {
     icon.classList.toggle("collapse");
 }
 
-await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.value, [])
+const collapseThrottle = throttle(collapseOverall, 1000);
+
+onMounted(async () => {
+    districtOption.value = undefined;
+    await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.value, [])
+})
 
 </script>
 <template>
-    <div class="options">
-        <AreaDropdownGroup :id="id" :type="type" :code="code" />
-    </div>
-    <div class="content">
-        <div class="overall">
-            <h1 class="overall__title" @click="collapseOverall">投票概況 
-                <label class="overall__title__icon"></label>
-            </h1>
-            <div class="overall__content">
-                <div v-if="OAType === 'N'" class="overall__content__title">
-                    <label>全國</label>
-                </div>
-                <div v-else class="overall__content__title" >
-                    <label v-if="selectedCity">{{ selectedCity.areaName }}</label><label v-if="selectedDist"> - {{ selectedDist.areaName}} </label> <label v-if="selectedLi"> - {{ selectedLi.areaName }}</label>
-                </div>
-                <div class="overall__content__detail">
-                    <Profile class="detail" :id="id" :type="OAType" :code="OACode" />
-                    <Tickets class="detail" :id="id" :type="OAType" :code="OACode" :list="OAList" :isOverall="true" />
+    <NuxtErrorBoundary>
+        <div class="options">
+            <AreaDropdownGroup :id="id" :type="type" :code="code" />
+        </div>
+        <div class="content">
+            <div class="overall">
+                <h1 class="overall__title">
+                    {{ $t('overall.overall') }}
+                    <label class="overall__title__icon" @click="collapseThrottle"></label>
+                </h1>
+                <div class="overall__content">
+                    <div v-if="OAType === 'N'" class="overall__content__title">
+                        <label>{{ $t('overall.national') }}</label>
+                    </div>
+                    <div v-else class="overall__content__title" >
+                        <label v-if="selectedCity">{{ selectedCity.areaName }}</label><label v-if="selectedDist"> - {{ selectedDist.areaName}} </label> <label v-if="selectedLi"> - {{ selectedLi.areaName }}</label>
+                    </div>
+                    <div class="overall__content__detail">
+                        <Profile class="detail" :id="id" :type="OAType" :code="OACode" />
+                        <Tickets class="detail" :id="id" :type="OAType" :code="OACode" :list="OAList" :isOverall="true" />
+                    </div>
                 </div>
             </div>
+            <div class="map">
+                <Map :id="id" type="C" />
+            </div>
+            <div class="detail">
+                <TicketGroup :id="id" :type="type" :code="code" />
+            </div>
         </div>
-        <div class="map">
-            <Map :id="id" type="C" />
-        </div>
-        <div class="detail">
-            <TicketGroup :id="id" :type="type" :code="code" />
-        </div>
-    </div>
+        <template #error="{ error }">
+            <error :error="error" />
+        </template>
+    </NuxtErrorBoundary>
 </template>
 
 <style lang="scss">
-@mixin pad {
-    @media(max-width: 1100px) {
-        @content;
-    }
-}
-@mixin mobile {
-    @media(max-width:768px){
-        width: 100%;
-        @content;
-    }
-}
-
 .options {
     display: flex;
     gap: 20px;
@@ -124,9 +127,9 @@ await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.va
         height: 100%;
         padding: 20px;
         border-radius: 8px;
+        display: block;
 
         @include pad {
-            display: block;
             width: 100%;
             max-width: calc(100% - 35px);
         }
@@ -138,7 +141,6 @@ await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.va
     
             @include pad {
                 width: 100%;
-                cursor: pointer;
                 margin-bottom: 0px;
             }
     
@@ -147,7 +149,7 @@ await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.va
                 cursor: pointer;
                 width: 24px;
                 height: 24px;
-                background-image: url('@/assets/png/right-arrow.png');
+                background-image: url('@/assets/png/chevron-right-solid.svg');
                 background-repeat: no-repeat;
                 background-position: center;
                 background-size: 16px;
@@ -167,7 +169,7 @@ await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.va
         > .overall__content {
             height: 100%;
             opacity: 1;
-            transition: all .2s ease-in;
+            transition: all .3s ease-in;
 
             > .overall__content__title {
                 height: 1.5em;
@@ -176,11 +178,10 @@ await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.va
         }
 
         > .collapse {
-            display: block;
+            display: none;
             @include pad {
                 margin-top: 0;
                 opacity: 0;
-                display: none;
                 height: 0;
             }
         }
@@ -205,6 +206,29 @@ await setDefaultOverall(id, OAType.value, OACode.value, OACCode.value, OAList.va
                     width: 100%;
                 }
             }
+
+            /* .ticketBox {
+                display: grid;
+                row-gap: 12px;
+                padding: 12px 20px;
+                border-radius: 8px;
+                min-width: 250px;
+                min-height: 190px;
+
+                @include pie;
+
+                > .TContent {
+                    height: 1.5em;
+                    width: 100%;
+                    background: linear-gradient(45deg, $white-normal-hover, $white-normal-active, $white-normal-hover, $white-normal-active);
+                    animation: gradient 1s infinite linear;
+                    background-size: 300% 300%;
+                }
+                > .TTitle {
+                    height: 2em;
+                    width: 8em;
+                }
+            } */
         }
     }
 

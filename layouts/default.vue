@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia';
 import { useElectionStore } from '~/stores/useElectionStore';
 
 
@@ -8,14 +7,21 @@ const { electionList } = storeToRefs(store);
 const { getElectionList } = store;
 await getElectionList();
 
-const d = new Date();
-const year = ref(d.getFullYear());
+const clickLanSelect = () => {
+    const lanOptions: HTMLDivElement = document.getElementsByClassName('options')[0];
+    console.log('click');
+    lanOptions.classList.toggle('none')
+}
 
 </script>
 <template>
     <div class="layout">
         <div class="layout__nav" style="z-index: 10;">
-            <h3 class="layout__nav__title">{{ year }} 開票地圖</h3>
+            <h3 class="layout__nav__title">{{ $t('UI.name') }}</h3>
+            <select class="layout__nav__select" v-model="$i18n.locale">
+                <option value="en">🇺🇸</option>
+                <option value="ch">🇹🇼</option>
+            </select>
         </div>
         <div class="layout__content">
             <div class="tabContainer">
@@ -30,7 +36,7 @@ const year = ref(d.getFullYear());
                                 type: 'N',
                                 code: `${item.prv_code}_${item.city_code}_${item.area_code}_${item.dept_code}_${item.li_code}` 
                             },}">
-                            {{ item.theme_name }}
+                            {{ $t('UI.session', { session: item.session }) }}
                     </NuxtLink>
                 </div>
             </div>
@@ -40,15 +46,6 @@ const year = ref(d.getFullYear());
 </template>
 <style lang="scss">
 @import url('@/assets/reset.css');
-@import '../assets/_color.scss';
-@import '../assets/_font.scss';
-
-@mixin mobile {
-    @media(max-width:768px){
-        @content;
-    }
-}
-
 .layout {
     background-color: $bgc;
     &__nav {
@@ -57,13 +54,30 @@ const year = ref(d.getFullYear());
         position: fixed;
         width: 100%;
         top:0;
+        display: flex;
+        justify-content: space-between;
 
         &__title {
             color: $white-normal;
             @include fontWeight-blod;
             font-size: 32px;
             line-height: 72px;
-            padding-left: 35px;
+            margin-left: 35px;
+            @include mobile {
+                font-size: 26px;
+                margin-left: 14px;
+            }
+        }
+
+        &__select {
+            color: $white-normal;
+            margin-right: 35px;
+            font-size: 1.5em;
+            background-color: $indigo-normal;
+            cursor: pointer;
+            @include mobile {
+                margin-right: 14px;
+            }
         }
 
         @include mobile {

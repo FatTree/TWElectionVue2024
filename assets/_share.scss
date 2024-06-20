@@ -1,3 +1,14 @@
+@mixin pad {
+    @media(max-width: 1100px) {
+        @content;
+    }
+}
+@mixin mobile {
+    @media(max-width:768px){
+        width: 100%;
+        @content;
+    }
+}
 @mixin pie {
     .pie {
         min-width: 120px;
@@ -32,4 +43,27 @@
             }
         }
     }
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 100%;
+	}
+	100% {
+		background-position: 0%;
+	}
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: all .5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+    opacity: 0
+}
+
+.none {
+    display: none !important;
 }
